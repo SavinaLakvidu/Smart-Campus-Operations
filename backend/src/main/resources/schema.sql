@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     status ENUM('PENDING','APPROVED','REJECTED','CANCELLED') DEFAULT 'PENDING',
 
     decision_reason VARCHAR(255),
-    decided_by INT,
+    decided_by INT NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -48,3 +48,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     CONSTRAINT fk_decided_by_admin
         FOREIGN KEY (decided_by) REFERENCES users(user_id)
 );
+
+CREATE INDEX idx_resource_date ON bookings(resource_id, booking_date);
+CREATE INDEX idx_user_date ON bookings(user_id, booking_date);
+CREATE INDEX idx_status ON bookings(status);
