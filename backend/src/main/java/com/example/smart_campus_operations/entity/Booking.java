@@ -1,6 +1,6 @@
-package com.smartcampus.entity;
+package com.example.smart_campus_operations.entity;
 
-import com.smartcampus.entity.enums.BookingStatus;
+import com.example.smart_campus_operations.entity.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -44,6 +44,7 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private BookingStatus status = BookingStatus.PENDING;
 
     @Column(name = "decision_reason", length = 255)
