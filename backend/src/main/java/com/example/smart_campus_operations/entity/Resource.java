@@ -1,6 +1,6 @@
-package com.smartcampus.entity;
+package com.example.smart_campus_operations.entity;
 
-import com.smartcampus.entity.enums.ResourceStatus;
+import com.example.smart_campus_operations.entity.enums.ResourceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -30,6 +30,7 @@ public class Resource {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private ResourceStatus status = ResourceStatus.AVAILABLE;
 
     @Column(name = "created_at", updatable = false)

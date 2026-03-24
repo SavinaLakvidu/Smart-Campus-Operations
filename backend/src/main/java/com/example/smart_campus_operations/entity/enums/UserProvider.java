@@ -1,4 +1,4 @@
-package com.smartcampus.entity.enums;
+package com.example.smart_campus_operations.entity.enums;
 
 public enum UserProvider {
     LOCAL, GOOGLE
