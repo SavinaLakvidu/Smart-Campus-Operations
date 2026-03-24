@@ -11,6 +11,7 @@ import com.example.smart_campus_operations.repository.ResourceRepository;
 import com.example.smart_campus_operations.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.example.smart_campus_operations.exception.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,22 +28,22 @@ public class BookingService {
     public BookingResponseDTO createBooking(BookingRequestDTO dto, Integer userId) {
         // Validate end time is after start time
         if (!dto.getEndTime().isAfter(dto.getStartTime())) {
-            throw new IllegalArgumentException("End time must be after start time");
+            throw new BadRequestException("End time must be after start time");
         }
 
         // Check resource exists
         Resource resource = resourceRepository.findById(dto.getResourceId())
-            .orElseThrow(() -> new RuntimeException("Resource not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
 
         // Check resource is available
         if (resource.getStatus() != com.example.smart_campus_operations.entity.enums.ResourceStatus.AVAILABLE) {
-            throw new IllegalStateException("Resource is not available for booking");
+            throw new BadRequestException("Resource is not available for booking");
         }
 
         // Check capacity
         if (dto.getExpectedAttendees() != null && resource.getCapacity() != null) {
             if (dto.getExpectedAttendees() > resource.getCapacity()) {
-                throw new IllegalArgumentException(
+                throw new BadRequestException(
                     "Expected attendees exceed resource capacity of " + resource.getCapacity()
                 );
             }
@@ -56,12 +57,12 @@ public class BookingService {
             dto.getEndTime()
         );
         if (conflict) {
-            throw new IllegalStateException("Resource is already booked for this time slot");
+            throw new ConflictException("Resource is already booked for this time slot");
         }
 
         // Get user
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Build and save booking
         Booking booking = Booking.builder()
@@ -97,7 +98,7 @@ public class BookingService {
     // Get booking by ID
     public BookingResponseDTO getBookingById(Integer bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
-            .orElseThrow(() -> new RuntimeException("Booking not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
         return mapToResponse(booking);
     }
 
@@ -108,21 +109,21 @@ public class BookingService {
             .orElseThrow(() -> new RuntimeException("Booking not found"));
 
         if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new IllegalStateException("Only PENDING bookings can be approved or rejected");
+            throw new BadRequestException("Only PENDING bookings can be approved or rejected");
         }
 
         User admin = userRepository.findById(adminId)
-            .orElseThrow(() -> new RuntimeException("Admin not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Admin not found"));
 
         if (decision.equalsIgnoreCase("APPROVE")) {
             booking.setStatus(BookingStatus.APPROVED);
         } else if (decision.equalsIgnoreCase("REJECT")) {
             if (reason == null || reason.isBlank()) {
-                throw new IllegalArgumentException("A reason is required when rejecting a booking");
+                throw new BadRequestException("A reason is required when rejecting a booking");
             }
             booking.setStatus(BookingStatus.REJECTED);
         } else {
-            throw new IllegalArgumentException("Decision must be APPROVE or REJECT");
+            throw new BadRequestException("Decision must be APPROVE or REJECT");
         }
 
         booking.setDecisionReason(reason);
@@ -137,12 +138,12 @@ public class BookingService {
             .orElseThrow(() -> new RuntimeException("Booking not found"));
 
         if (!booking.getUser().getUserId().equals(userId)) {
-            throw new IllegalStateException("You can only cancel your own bookings");
+            throw new UnauthorizedException("You can only cancel your own bookings");
         }
 
         if (booking.getStatus() != BookingStatus.APPROVED &&
             booking.getStatus() != BookingStatus.PENDING) {
-            throw new IllegalStateException("Only APPROVED or PENDING bookings can be cancelled");
+            throw new BadRequestException("Only APPROVED or PENDING bookings can be cancelled");
         }
 
         booking.setStatus(BookingStatus.CANCELLED);
