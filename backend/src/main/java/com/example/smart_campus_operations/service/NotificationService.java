@@ -1,0 +1,36 @@
+package com.example.smart_campus_operations.service;
+
+import com.example.smart_campus_operations.entity.Notification;
+import com.example.smart_campus_operations.entity.User;
+import com.example.smart_campus_operations.entity.enums.NotificationType;
+import com.example.smart_campus_operations.repository.NotificationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class NotificationService {
+
+    private final NotificationRepository notificationRepository;
+
+    @Transactional
+    public void create(User recipient, NotificationType type, String title, String message, String referenceType, Long referenceId) {
+        if (recipient == null) {
+            return;
+        }
+
+        Notification notification = Notification.builder()
+                .recipient(recipient)
+                .type(type)
+                .title(title)
+                .message(message)
+                .referenceType(referenceType)
+                .referenceId(referenceId)
+                .readFlag(false)
+                .build();
+
+        notificationRepository.save(notification);
+    }
+}
+
