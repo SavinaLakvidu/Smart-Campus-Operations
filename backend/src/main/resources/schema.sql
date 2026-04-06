@@ -154,3 +154,38 @@ CREATE INDEX idx_incident_tickets_resource ON incident_tickets(resource_id);
 CREATE INDEX idx_ticket_comments_ticket ON ticket_comments(ticket_id);
 CREATE INDEX idx_ticket_attachments_ticket ON ticket_attachments(ticket_id);
 CREATE INDEX idx_ticket_status_history_ticket ON ticket_status_history(ticket_id);
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    recipient_id INT NOT NULL,
+    type ENUM(
+        'TICKET_CREATED',
+        'TICKET_ASSIGNED',
+        'TICKET_STATUS_CHANGED',
+        'BOOKING_CREATED',
+        'BOOKING_APPROVED',
+        'BOOKING_REJECTED',
+        'BOOKING_CANCELLED'
+    ) NOT NULL,
+    title VARCHAR(120) NOT NULL,
+    message VARCHAR(500) NOT NULL,
+    reference_type VARCHAR(40),
+    reference_id BIGINT,
+    read_flag BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_notifications_recipient
+        FOREIGN KEY (recipient_id) REFERENCES users(user_id)
+);
+
+CREATE INDEX idx_notifications_recipient ON notifications(recipient_id);
+CREATE INDEX idx_notifications_read_flag ON notifications(read_flag);
+CREATE INDEX idx_notifications_created_at ON notifications(created_at);
+
+ALTER TABLE notifications
+MODIFY COLUMN type ENUM(
+    'TICKET_CREATED',
+    'TICKET_ASSIGNED',
+    'TICKET_STATUS_CHANGED',
+    'NEW_COMMENT'
+) NOT NULL;
