@@ -9,9 +9,9 @@ import com.example.smart_campus_operations.repository.ResourceRepository;
 import com.example.smart_campus_operations.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+//import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class SampleDataInitializer implements CommandLineRunner {
 
