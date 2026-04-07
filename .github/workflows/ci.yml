@@ -72,3 +72,12 @@ jobs:
         run: |
           cd frontend
           npm run build
+
+      # Step 5 - Build and test
+      - name: Make mvnw executable
+        run: chmod +x backend/mvnw
+
+      - name: Build and test with Maven
+        run: |
+          cd backend
+          ./mvnw clean test
