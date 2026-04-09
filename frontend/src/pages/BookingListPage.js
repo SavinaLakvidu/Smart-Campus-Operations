@@ -48,7 +48,9 @@ function BookingListPage() {
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>My Bookings</h2>
-                <a href="/bookings/new" className="btn btn-primary">+ New Booking</a>
+                <a href="/bookings/new" className="btn text-white" style={{ backgroundColor: "#111111" }}>
+                    New Booking
+                </a>
             </div>
 
             {bookings.length === 0 ? (
@@ -56,7 +58,7 @@ function BookingListPage() {
             ) : (
                 <div className="table-responsive">
                     <table className="table table-hover table-bordered">
-                        <thead className="table-primary">
+                        <thead className="table-dark">
                             <tr>
                                 <th>#</th>
                                 <th>Resource</th>
