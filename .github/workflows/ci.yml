@@ -40,11 +40,14 @@ jobs:
           echo "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver" >> backend/src/main/resources/application-local.properties
 
       # Step 5 - Build and test
+      - name: Make mvnw executable
+        run: chmod +x backend/mvnw
+
       - name: Build and test with Maven
         run: |
           cd backend
           ./mvnw clean test
-
+          
   build-frontend:
     runs-on: ubuntu-latest
 
