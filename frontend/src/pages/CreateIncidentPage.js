@@ -5,7 +5,8 @@ import {
     createTicket,
     getResources,
     getTicketApiCredentials,
-    saveTicketApiCredentials
+    saveTicketApiCredentials,
+    uploadTicketAttachments
 } from '../services/incidentService';
 import './incident.css';
 
@@ -50,6 +51,7 @@ function CreateIncidentPage() {
     const [form, setForm] = useState(initialForm);
     const [errors, setErrors] = useState({});
     const [credentials, setCredentials] = useState(getTicketApiCredentials());
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     useEffect(() => {
         let mounted = true;
@@ -107,6 +109,15 @@ function CreateIncidentPage() {
             nextErrors.preferredContactEmail = 'Use a valid email address';
         }
 
+        if (selectedFiles.length > 3) {
+            nextErrors.attachments = 'You can upload maximum 3 images';
+        }
+
+        const invalidFile = selectedFiles.find((file) => !['image/jpeg', 'image/png', 'image/webp', 'image/jpg'].includes(file.type));
+        if (invalidFile) {
+            nextErrors.attachments = 'Only JPG, JPEG, PNG, and WEBP images are allowed';
+        }
+
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;
     }
@@ -132,6 +143,15 @@ function CreateIncidentPage() {
             };
 
             const created = await createTicket(payload);
+
+            if (selectedFiles.length > 0) {
+                try {
+                    await uploadTicketAttachments(created.id, selectedFiles);
+                } catch (uploadError) {
+                    toast.warning(`Ticket created, but attachment upload failed: ${uploadError.message}`);
+                }
+            }
+
             toast.success(`Ticket ${created.ticketCode} created successfully`);
             navigate(`/incidents/${created.id}`, {
                 state: { justCreated: true }
@@ -257,6 +277,35 @@ function CreateIncidentPage() {
                                 placeholder="Describe what happened, when it started, and any visible impact..."
                             />
                             {errors.description ? <div className="incident-error">{errors.description}</div> : null}
+                        </div>
+
+                        <div className="incident-grid-full">
+                            <label className="incident-label">Attachments (Optional)</label>
+                            <input
+                                className="incident-input"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,image/jpg"
+                                multiple
+                                onChange={(event) => {
+                                    const files = Array.from(event.target.files || []);
+                                    setSelectedFiles(files);
+                                    setErrors((prev) => ({ ...prev, attachments: '' }));
+                                }}
+                            />
+                            <div className="incident-helper-box" style={{ marginTop: '8px' }}>
+                                <div className="incident-helper-title">Attachment Guidelines</div>
+                                <ul className="incident-helper-list">
+                                    <li>Only image files are allowed: PNG, JPG, JPEG, WEBP</li>
+                                    <li>Maximum attachments per ticket: 3 files</li>
+                                    <li>Attachments are uploaded automatically after ticket creation</li>
+                                </ul>
+                            </div>
+                            {selectedFiles.length > 0 ? (
+                                <div className="incident-meta" style={{ marginTop: '4px' }}>
+                                    {selectedFiles.length} file(s) selected
+                                </div>
+                            ) : null}
+                            {errors.attachments ? <div className="incident-error">{errors.attachments}</div> : null}
                         </div>
 
                         <div>

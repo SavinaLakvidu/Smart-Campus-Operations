@@ -6,8 +6,7 @@ import {
     deleteTicketAttachment,
     deleteTicketComment,
     downloadTicketAttachment,
-    getTicketById,
-    uploadTicketAttachments
+    getTicketById
 } from '../services/incidentService';
 import './incident.css';
 
@@ -31,7 +30,6 @@ function IncidentTicketDetailsPage() {
     const [loading, setLoading] = useState(true);
     const [ticket, setTicket] = useState(null);
     const [commentText, setCommentText] = useState('');
-    const [selectedFiles, setSelectedFiles] = useState([]);
     const [busyAction, setBusyAction] = useState('');
 
     useEffect(() => {
@@ -90,26 +88,6 @@ function IncidentTicketDetailsPage() {
             await deleteTicketComment(ticketId, commentId);
             await refreshTicket();
             toast.success('Comment deleted');
-        } catch (error) {
-            toast.error(error.message);
-        } finally {
-            setBusyAction('');
-        }
-    }
-
-    async function handleUploadAttachments(event) {
-        event.preventDefault();
-        if (!selectedFiles.length) {
-            toast.error('Select at least one image');
-            return;
-        }
-
-        setBusyAction('upload');
-        try {
-            await uploadTicketAttachments(ticketId, selectedFiles);
-            setSelectedFiles([]);
-            await refreshTicket();
-            toast.success('Attachments uploaded successfully');
         } catch (error) {
             toast.error(error.message);
         } finally {
@@ -207,30 +185,6 @@ function IncidentTicketDetailsPage() {
 
                             <div className="incident-card" style={{ marginTop: '12px', padding: '16px' }}>
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '12px' }}>Attachments</h3>
-                                <form onSubmit={handleUploadAttachments}>
-                                    <div className="incident-grid">
-                                        <div className="incident-grid-full">
-                                            <label className="incident-label">Upload images</label>
-                                            <input
-                                                className="incident-input"
-                                                type="file"
-                                                accept="image/jpeg,image/png,image/webp,image/jpg"
-                                                multiple
-                                                onChange={(event) => setSelectedFiles(Array.from(event.target.files || []))}
-                                            />
-                                            <div className="incident-meta" style={{ marginTop: '6px' }}>
-                                                JPG, PNG, and WEBP only. Maximum 3 attachments per ticket.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="incident-actions">
-                                        <button className="incident-btn-primary" type="submit" disabled={busyAction === 'upload'}>
-                                            {busyAction === 'upload' ? 'Uploading...' : 'Upload Attachments'}
-                                        </button>
-                                    </div>
-                                </form>
-
                                 <div style={{ marginTop: '14px' }}>
                                     {(ticket.attachments || []).length === 0 ? (
                                         <div className="incident-meta">No attachments uploaded yet.</div>

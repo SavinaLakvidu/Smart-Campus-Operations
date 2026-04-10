@@ -36,10 +36,10 @@
 }
 
 .incident-card {
-    background: var(--brand-card);
-    border: 1px solid var(--brand-border);
+    background: linear-gradient(180deg, #ffffff 0%, #f3fbfa 100%);
+    border: 1px solid #b8dcda;
     border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 10px 30px rgba(15, 118, 110, 0.09);
     padding: 20px;
 }
 
@@ -56,9 +56,10 @@
 .incident-label {
     display: block;
     font-weight: 600;
-    color: var(--brand-ink);
+    color: #0f4b47;
     margin-bottom: 6px;
     font-size: 0.95rem;
+    letter-spacing: 0.2px;
 }
 
 .incident-input,
@@ -132,6 +133,30 @@
     margin-top: 4px;
 }
 
+.incident-helper-box {
+    border: 1px solid #67e8f9;
+    background: linear-gradient(180deg, #ecfeff 0%, #f0fdfa 100%);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.incident-helper-title {
+    color: #0f766e;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.incident-helper-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #155e75;
+    font-size: 0.86rem;
+    line-height: 1.45;
+}
+
 .incident-chip {
     display: inline-flex;
     align-items: center;
@@ -182,7 +207,7 @@
 }
 
 .incident-meta {
-    color: var(--brand-muted);
+    color: #4b5563;
     font-size: 0.9rem;
 }
 
@@ -193,30 +218,35 @@
 }
 
 .incident-kv {
-    border: 1px solid var(--brand-border);
+    border: 1px solid #b5d6d3;
     border-radius: 12px;
     padding: 12px;
+    background: linear-gradient(180deg, #ffffff 0%, #eef9f8 100%);
 }
 
 .incident-kv strong {
     display: block;
     font-size: 0.78rem;
     letter-spacing: 0.4px;
-    color: var(--brand-muted);
+    color: #0f766e;
     margin-bottom: 6px;
+}
+
+.incident-kv > div {
+    color: #0f172a;
 }
 
 .incident-timeline {
     margin-top: 16px;
-    border-left: 3px solid #bae6fd;
+    border-left: 3px solid #2dd4bf;
     padding-left: 14px;
     display: grid;
     gap: 12px;
 }
 
 .incident-timeline-item {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(180deg, #f0fdfa 0%, #ecfeff 100%);
+    border: 1px solid #a7f3d0;
     border-radius: 10px;
     padding: 10px;
 }
