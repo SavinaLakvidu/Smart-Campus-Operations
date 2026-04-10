@@ -74,12 +74,16 @@ function Navbar() {
                                     Notifications
                                 </Link>
                             </li>
-                            <li><hr className="dropdown-divider" /></li>
-                            <li>
-                                <Link className="dropdown-item" to="/admin/bookings">
-                                    Admin Panel
-                                </Link>
-                            </li>
+                            {MOCK_USER.role === 'ADMIN' && (
+                                <>
+                                    <li><hr className="dropdown-divider" /></li>
+                                    <li>
+                                        <Link className="dropdown-item" to="/admin/bookings">
+                                            Admin Panel
+                                        </Link>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </div>
                 </div>
