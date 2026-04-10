@@ -54,7 +54,7 @@ function CreateBookingPage() {
         <div className="row justify-content-center">
             <div className="col-md-6">
                 <div className="card shadow">
-                    <div className="card-header bg-primary text-white">
+                    <div className="card-header text-white" style={{ backgroundColor: "#111111" }}>
                         <h4 className="mb-0">Create New Booking</h4>
                     </div>
                     <div className="card-body">
@@ -144,8 +144,9 @@ function CreateBookingPage() {
                             <div className="d-flex gap-2">
                                 <button
                                     type="submit"
-                                    className="btn btn-primary"
+                                    className="btn text-white"
                                     disabled={loading}
+                                    style={{ backgroundColor: "#111111" }}
                                 >
                                     {loading ? 'Creating...' : 'Create Booking'}
                                 </button>
