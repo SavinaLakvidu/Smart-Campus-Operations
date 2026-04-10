@@ -48,7 +48,12 @@ function IncidentMyTicketsPage() {
                 </div>
 
                 <div className="incident-card">
-                    {loading ? <div>Loading tickets...</div> : null}
+                    {loading ? (
+                        <div className="incident-loading">
+                            <div className="incident-loading-spinner" />
+                            <div className="incident-loading-text">Loading your incident tickets...</div>
+                        </div>
+                    ) : null}
                     {!loading && tickets.length === 0 ? (
                         <div>
                             No incident tickets found. <Link to="/incidents/new">Create your first ticket</Link>.
@@ -70,7 +75,7 @@ function IncidentMyTicketsPage() {
                                         Created: {formatDate(ticket.createdAt)}
                                     </div>
                                     <div className="incident-actions" style={{ marginTop: '10px' }}>
-                                        <Link className="incident-btn-ghost" to={`/incidents/${ticket.id}`}>
+                                        <Link className="incident-btn-view" to={`/incidents/${ticket.id}`}>
                                             View Details
                                         </Link>
                                     </div>

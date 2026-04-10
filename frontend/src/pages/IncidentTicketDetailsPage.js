@@ -135,7 +135,12 @@ function IncidentTicketDetailsPage() {
                 </div>
 
                 <div className="incident-card">
-                    {loading ? <div>Loading ticket details...</div> : null}
+                    {loading ? (
+                        <div className="incident-loading">
+                            <div className="incident-loading-spinner" />
+                            <div className="incident-loading-text">Loading ticket details...</div>
+                        </div>
+                    ) : null}
                     {!loading && !ticket ? <div>Ticket not found.</div> : null}
 
                     {!loading && ticket ? (
