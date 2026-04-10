@@ -8,6 +8,9 @@ import CreateBookingPage from './pages/CreateBookingPage.js';
 import AdminBookingsPage from './pages/AdminBookingPage.js';
 import HomePage from './pages/HomePage';
 import Navbar from './components/navbar.js';
+import CreateIncidentPage from './pages/CreateIncidentPage';
+import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
+import IncidentTicketDetailsPage from './pages/IncidentTicketDetailsPage';
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
             <Route path="/bookings" element={<BookingListPage />} />
             <Route path="/bookings/new" element={<CreateBookingPage />} />
             <Route path="/admin/bookings" element={<AdminBookingsPage />} />
+            <Route path="/incidents" element={<IncidentMyTicketsPage />} />
+            <Route path="/incidents/new" element={<CreateIncidentPage />} />
+            <Route path="/incidents/:ticketId" element={<IncidentTicketDetailsPage />} />
           </Routes>
         </div>
       </div>

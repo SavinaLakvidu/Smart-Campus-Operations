@@ -35,9 +35,9 @@ const features = [
         icon: '🔧',
         title: 'Maintenance & Incident Ticketing',
         description: 'Report faults, damaged equipment, or any incidents on campus. Attach photos as evidence, set priority levels, and track the resolution progress in real time.',
-        link: '/incidents',
+        link: '/incidents/new',
         linkText: 'Report Incident',
-        available: false
+        available: true
     },
     {
         icon: '🔔',
