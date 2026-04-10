@@ -65,20 +65,22 @@
 .incident-select,
 .incident-textarea {
     width: 100%;
-    border: 1px solid var(--brand-border);
+    border: 1px solid #93c5c1;
     border-radius: 10px;
     padding: 10px 12px;
     font-size: 0.95rem;
-    background: #fff;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #f5fffd;
+    color: #0f172a;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
 .incident-input:focus,
 .incident-select:focus,
 .incident-textarea:focus {
     outline: none;
-    border-color: var(--brand-aqua);
-    box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
+    border-color: #0f766e;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.18);
 }
 
 .incident-textarea {
@@ -160,10 +162,15 @@
 }
 
 .incident-item {
-    border: 1px solid var(--brand-border);
+    border: 1px solid #b7d9d6;
     border-radius: 14px;
-    background: #fff;
+    background: linear-gradient(180deg, #ffffff 0%, #f0fbf9 100%);
     padding: 14px;
+    box-shadow: 0 6px 18px rgba(15, 118, 110, 0.08);
+}
+
+.incident-item-top strong {
+    color: #0b3b3a;
 }
 
 .incident-item-top {
