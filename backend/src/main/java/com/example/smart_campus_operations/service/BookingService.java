@@ -36,7 +36,8 @@ public class BookingService {
             .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
 
         // Check resource is available
-        if (resource.getStatus() != com.example.smart_campus_operations.entity.enums.ResourceStatus.AVAILABLE) {
+        if (resource.getStatus() != com.example.smart_campus_operations.entity.enums.ResourceStatus.AVAILABLE && 
+            resource.getStatus() != com.example.smart_campus_operations.entity.enums.ResourceStatus.ACTIVE) {
             throw new BadRequestException("Resource is not available for booking");
         }
 

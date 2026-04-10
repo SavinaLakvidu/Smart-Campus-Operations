@@ -53,7 +53,8 @@ const features = [
         description: 'Administrators can review and approve or reject booking requests, manage resources, assign technicians to incidents, and oversee all campus operations from one place.',
         link: '/admin/bookings',
         linkText: 'Go to Admin Panel',
-        available: true
+        available: MOCK_USER.role === 'ADMIN',
+        adminOnly: true
     }
 ];
 
@@ -331,7 +332,19 @@ function HomePage() {
                                         >
                                             {feature.linkText} →
                                         </Link>
-                                    ) : (
+                                    ) : feature.adminOnly ? (
+                                        <span style={{
+                                            backgroundColor: '#f0f0f0',
+                                            color: '#888888',
+                                            padding: '6px 14px',
+                                            fontSize: '0.8rem',
+                                            fontWeight: '600',
+                                            borderRadius: '3px',
+                                            letterSpacing: '0.5px'
+                                        }}>
+                                            Admin Access Only
+                                        </span>
+                                    ) : (    
                                         <span style={{
                                             backgroundColor: '#f0f0f0',
                                             color: '#888888',
