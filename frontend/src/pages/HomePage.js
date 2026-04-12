@@ -1,77 +1,80 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const MOCK_USER = {
-    name: 'John Student',
-    role: 'STUDENT'
-};
-
-const features = [
-    {
-        icon: '🏛️',
-        title: 'Facilities & Assets Catalogue',
-        description: 'Browse all bookable resources including lecture halls, computer labs, meeting rooms, and equipment. Filter by type, capacity, and location to find exactly what you need.',
-        link: '/resources',
-        linkText: 'Browse Resources',
-        available: false
-    },
-    {
-        icon: '📅',
-        title: 'Booking Management',
-        description: 'Request bookings for any available resource by specifying your date, time, purpose, and expected attendees. Track the status of your bookings from pending to approved.',
-        link: '/bookings',
-        linkText: 'My Bookings',
-        available: true
-    },
-    {
-        icon: '➕',
-        title: 'Create a Booking',
-        description: 'Submit a new booking request quickly and easily. The system automatically checks for scheduling conflicts to ensure your time slot is available.',
-        link: '/bookings/new',
-        linkText: 'Book Now',
-        available: true
-    },
-    {
-        icon: '🔧',
-        title: 'Maintenance & Incident Ticketing',
-        description: 'Report faults, damaged equipment, or any incidents on campus. Attach photos as evidence, set priority levels, and track the resolution progress in real time.',
-        link: '/incidents',
-        linkText: 'Report Incident',
-        available: false
-    },
-    {
-        icon: '🔔',
-        title: 'Notifications',
-        description: 'Stay informed with real-time notifications for booking approvals, rejections, ticket status updates, and new comments. Never miss an important update.',
-        link: '/notifications',
-        linkText: 'View Notifications',
-        available: false
-    },
-    {
-        icon: '⚙️',
-        title: 'Admin Panel',
-        description: 'Administrators can review and approve or reject booking requests, manage resources, assign technicians to incidents, and oversee all campus operations from one place.',
-        link: '/admin/bookings',
-        linkText: 'Go to Admin Panel',
-        available: MOCK_USER.role === 'ADMIN',
-        adminOnly: true
-    }
-];
-
-const stats = [
-    { value: '4', label: 'Resources Available' },
-    { value: 'Active', label: 'Booking System' },
-    { value: '24/7', label: 'System Availability' },
-    { value: 'Live', label: 'Incident Reporting' }
-];
+import { useAuth } from '../context/AuthContext';
 
 function HomePage() {
-    const isLoggedIn = true;
+    const { user, loading } = useAuth();
+    const isLoggedIn = !!user;
+
+    const features = [
+        {
+            icon: '🏛️',
+            title: 'Facilities & Assets Catalogue',
+            description: 'Browse all bookable resources including lecture halls, computer labs, meeting rooms, and equipment. Filter by type, capacity, and location to find exactly what you need.',
+            link: '/resources',
+            linkText: 'Browse Resources',
+            available: false
+        },
+        {
+            icon: '📅',
+            title: 'Booking Management',
+            description: 'Request bookings for any available resource by specifying your date, time, purpose, and expected attendees. Track the status of your bookings from pending to approved.',
+            link: '/bookings',
+            linkText: 'My Bookings',
+            available: true
+        },
+        {
+            icon: '➕',
+            title: 'Create a Booking',
+            description: 'Submit a new booking request quickly and easily. The system automatically checks for scheduling conflicts to ensure your time slot is available.',
+            link: '/bookings/new',
+            linkText: 'Book Now',
+            available: true
+        },
+        {
+            icon: '🔧',
+            title: 'Maintenance & Incident Ticketing',
+            description: 'Report faults, damaged equipment, or any incidents on campus. Attach photos as evidence, set priority levels, and track the resolution progress in real time.',
+            link: '/incidents',
+            linkText: 'Report Incident',
+            available: false
+        },
+        {
+            icon: '🔔',
+            title: 'Notifications',
+            description: 'Stay informed with real-time notifications for booking approvals, rejections, ticket status updates, and new comments. Never miss an important update.',
+            link: '/notifications',
+            linkText: 'View Notifications',
+            available: false
+        },
+        {
+            icon: '⚙️',
+            title: 'Admin Panel',
+            description: 'Administrators can review and approve or reject booking requests, manage resources, assign technicians to incidents, and oversee all campus operations from one place.',
+            link: '/admin/bookings',
+            linkText: 'Go to Admin Panel',
+            available: user?.role === 'ADMIN',
+            adminOnly: true
+        }
+    ];
+
+    const stats = [
+        { value: '4', label: 'Resources Available' },
+        { value: 'Active', label: 'Booking System' },
+        { value: '24/7', label: 'System Availability' },
+        { value: 'Live', label: 'Incident Reporting' }
+    ];
+
+    if (loading) {
+        return (
+            <div style={{ padding: '40px', textAlign: 'center' }}>
+                Loading...
+            </div>
+        );
+    }
 
     return (
         <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
-
-            {/* Hero Section */}
             <div style={{
                 backgroundColor: '#111111',
                 color: '#ffffff',
@@ -98,7 +101,7 @@ function HomePage() {
                                         marginBottom: '12px',
                                         lineHeight: '1.2'
                                     }}>
-                                        {MOCK_USER.name}
+                                        {user?.username}
                                     </h1>
                                     <div style={{ marginBottom: '20px' }}>
                                         <span style={{
@@ -111,7 +114,7 @@ function HomePage() {
                                             borderRadius: '2px',
                                             textTransform: 'uppercase'
                                         }}>
-                                            {MOCK_USER.role}
+                                            {user?.role}
                                         </span>
                                     </div>
                                     <p style={{
@@ -200,7 +203,6 @@ function HomePage() {
                             )}
                         </div>
 
-                        {/* Stats moved to right side of hero */}
                         <div className="col-lg-4 d-none d-lg-block">
                             <div style={{
                                 backgroundColor: '#2c2c2c',
@@ -241,8 +243,7 @@ function HomePage() {
                     </div>
                 </div>
             </div>
-                   
-            {/* Features Section */}
+
             <div className="container" style={{ padding: '64px 12px' }}>
                 <div style={{ marginBottom: '48px' }}>
                     <p style={{
@@ -344,7 +345,7 @@ function HomePage() {
                                         }}>
                                             Admin Access Only
                                         </span>
-                                    ) : (    
+                                    ) : (
                                         <span style={{
                                             backgroundColor: '#f0f0f0',
                                             color: '#888888',
