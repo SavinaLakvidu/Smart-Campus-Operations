@@ -14,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import CreateIncidentPage from './pages/CreateIncidentPage';
 import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
 import IncidentTicketDetailsPage from './pages/IncidentTicketDetailsPage';
+import AdminTicketManagementPage from './pages/AdminTicketManagementPage';
 
 function AppContent() {
   const location = useLocation();
@@ -58,7 +59,7 @@ function AppContent() {
             <Route
               path="/incidents"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN"]}>
                   <IncidentMyTicketsPage />
                 </ProtectedRoute>
               }
@@ -67,8 +68,17 @@ function AppContent() {
             <Route
               path="/incidents/new"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN"]}>
                   <CreateIncidentPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/tickets"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminTicketManagementPage />
                 </ProtectedRoute>
               }
             />

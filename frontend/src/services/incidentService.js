@@ -60,6 +60,42 @@ export async function getTicketById(ticketId) {
     }
 }
 
+export async function getAllTickets(params = {}) {
+    try {
+        const response = await api.get('/api/v1/tickets', { params });
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function getAssignableUsers() {
+    try {
+        const response = await api.get('/api/v1/tickets/assignees');
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function assignTicket(ticketId, technicianId) {
+    try {
+        const response = await api.patch(`/api/v1/tickets/${ticketId}/assign`, { technicianId });
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function updateTicketStatus(ticketId, payload) {
+    try {
+        const response = await api.patch(`/api/v1/tickets/${ticketId}/status`, payload);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
 export async function addTicketComment(ticketId, message) {
     try {
         const response = await api.post(`/api/v1/tickets/${ticketId}/comments`, { message });
