@@ -19,6 +19,10 @@ function Navbar() {
         transition: 'color 0.2s'
     });
 
+    const isAdmin = user?.role === 'ADMIN';
+    const isTechnician = user?.role === 'TECHNICIAN';
+    const isStaff = user?.role === 'STAFF';
+
     return (
         <nav style={{
             backgroundColor: '#111111',
@@ -42,10 +46,19 @@ function Navbar() {
 
                 <div className="d-none d-lg-flex align-items-center gap-1">
                     <Link to="/" style={navLinkStyle('/')}>Home</Link>
-                    <Link to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
-                    <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>New Booking</Link>
-                    <Link to="/incidents" style={navLinkStyle('/incidents')}>My tickets</Link>
-                    <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
+
+                    {isLoggedIn && (
+                        <>
+                            <Link to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
+
+                            {(user?.role === 'STUDENT' || isStaff || isAdmin) && (
+                                <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>New Booking</Link>
+                            )}
+
+                            <Link to="/incidents" style={navLinkStyle('/incidents')}>My Tickets</Link>
+                            <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
+                        </>
+                    )}
 
                     <div className="dropdown">
                         <button
@@ -61,20 +74,50 @@ function Navbar() {
                         >
                             More
                         </button>
+
                         <ul className="dropdown-menu dropdown-menu-dark">
                             <li>
                                 <Link className="dropdown-item" to="/incidents">
                                     Incidents
                                 </Link>
                             </li>
+
                             <li>
                                 <Link className="dropdown-item" to="/notifications">
                                     Notifications
                                 </Link>
                             </li>
-                            {user?.role === 'ADMIN' && (
+
+                            {(isTechnician || isAdmin) && (
                                 <>
                                     <li><hr className="dropdown-divider" /></li>
+                                    <li>
+                                        <Link className="dropdown-item" to="/technician/tickets">
+                                            Technician Panel
+                                        </Link>
+                                    </li>
+                                </>
+                            )}
+
+                            {(isStaff || isAdmin) && (
+                                <>
+                                    <li><hr className="dropdown-divider" /></li>
+                                    <li>
+                                        <Link className="dropdown-item" to="/staff/dashboard">
+                                            Staff Area
+                                        </Link>
+                                    </li>
+                                </>
+                            )}
+
+                            {isAdmin && (
+                                <>
+                                    <li><hr className="dropdown-divider" /></li>
+                                    <li>
+                                        <Link className="dropdown-item" to="/admin/users">
+                                            User Management
+                                        </Link>
+                                    </li>
                                     <li>
                                         <Link className="dropdown-item" to="/admin/bookings">
                                             Admin Panel
@@ -100,6 +143,7 @@ function Navbar() {
                             }}>
                                 {user?.role}
                             </span>
+
                             <span style={{
                                 color: '#ffffff',
                                 fontSize: '0.9rem',
@@ -107,6 +151,7 @@ function Navbar() {
                             }}>
                                 {user?.username}
                             </span>
+
                             <button
                                 onClick={logout}
                                 style={{
