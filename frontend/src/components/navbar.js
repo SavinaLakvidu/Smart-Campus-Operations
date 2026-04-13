@@ -50,9 +50,13 @@ function Navbar() {
                     {isLoggedIn && (
                         <>
                             <Link to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
+
                             {(user?.role === 'STUDENT' || isStaff || isAdmin) && (
                                 <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>New Booking</Link>
                             )}
+
+                            <Link to="/incidents" style={navLinkStyle('/incidents')}>My Tickets</Link>
+                            <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
                         </>
                     )}
 

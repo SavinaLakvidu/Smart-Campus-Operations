@@ -12,6 +12,9 @@ import Navbar from './components/navbar.js';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import CreateIncidentPage from './pages/CreateIncidentPage';
+import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
+import IncidentTicketDetailsPage from './pages/IncidentTicketDetailsPage';
 
 function AppContent() {
   const location = useLocation();
@@ -58,6 +61,33 @@ function AppContent() {
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminUsersPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
+                  <IncidentMyTicketsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents/new"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
+                  <CreateIncidentPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents/:ticketId"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
+                  <IncidentTicketDetailsPage />
                 </ProtectedRoute>
               }
             />
