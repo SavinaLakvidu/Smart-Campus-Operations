@@ -6,57 +6,57 @@ function HomePage() {
     const { user, loading } = useAuth();
     const isLoggedIn = !!user;
 
-    const features = [
-        {
-            icon: '🏛️',
-            title: 'Facilities & Assets Catalogue',
-            description: 'Browse all bookable resources including lecture halls, computer labs, meeting rooms, and equipment. Filter by type, capacity, and location to find exactly what you need.',
-            link: '/resources',
-            linkText: 'Browse Resources',
-            available: false
-        },
-        {
-            icon: '📅',
-            title: 'Booking Management',
-            description: 'Request bookings for any available resource by specifying your date, time, purpose, and expected attendees. Track the status of your bookings from pending to approved.',
-            link: '/bookings',
-            linkText: 'My Bookings',
-            available: true
-        },
-        {
-            icon: '➕',
-            title: 'Create a Booking',
-            description: 'Submit a new booking request quickly and easily. The system automatically checks for scheduling conflicts to ensure your time slot is available.',
-            link: '/bookings/new',
-            linkText: 'Book Now',
-            available: true
-        },
-        {
-            icon: '🔧',
-            title: 'Maintenance & Incident Ticketing',
-            description: 'Report faults, damaged equipment, or any incidents on campus. Attach photos as evidence, set priority levels, and track the resolution progress in real time.',
-            link: '/incidents',
-            linkText: 'Report Incident',
-            available: false
-        },
-        {
-            icon: '🔔',
-            title: 'Notifications',
-            description: 'Stay informed with real-time notifications for booking approvals, rejections, ticket status updates, and new comments. Never miss an important update.',
-            link: '/notifications',
-            linkText: 'View Notifications',
-            available: false
-        },
-        {
-            icon: '⚙️',
-            title: 'Admin Panel',
-            description: 'Administrators can review and approve or reject booking requests, manage resources, assign technicians to incidents, and oversee all campus operations from one place.',
-            link: '/admin/bookings',
-            linkText: 'Go to Admin Panel',
-            available: user?.role === 'ADMIN',
-            adminOnly: true
-        }
-    ];
+const features = [
+    {
+        icon: '🏛️',
+        title: 'Facilities & Assets Catalogue',
+        description: 'Browse all bookable resources including lecture halls, computer labs, meeting rooms, and equipment. Filter by type, capacity, and location to find exactly what you need.',
+        link: '/resources',
+        linkText: 'Browse Resources',
+        available: false
+    },
+    {
+        icon: '📅',
+        title: 'Booking Management',
+        description: 'Request bookings for any available resource by specifying your date, time, purpose, and expected attendees. Track the status of your bookings from pending to approved.',
+        link: '/bookings',
+        linkText: 'My Bookings',
+        available: true
+    },
+    {
+        icon: '➕',
+        title: 'Create a Booking',
+        description: 'Submit a new booking request quickly and easily. The system automatically checks for scheduling conflicts to ensure your time slot is available.',
+        link: '/bookings/new',
+        linkText: 'Book Now',
+        available: true
+    },
+    {
+        icon: '🔧',
+        title: 'Maintenance & Incident Ticketing',
+        description: 'Report faults, damaged equipment, or any incidents on campus. Attach photos as evidence, set priority levels, and track the resolution progress in real time.',
+        link: '/incidents/new',
+        linkText: 'Report Incident',
+        available: true
+    },
+    {
+        icon: '🔔',
+        title: 'Notifications',
+        description: 'Stay informed with real-time notifications for booking approvals, rejections, ticket status updates, and new comments. Never miss an important update.',
+        link: '/notifications',
+        linkText: 'View Notifications',
+        available: false
+    },
+    {
+        icon: '⚙️',
+        title: 'Admin Panel',
+        description: 'Administrators can review and approve or reject booking requests, manage resources, assign technicians to incidents, and oversee all campus operations from one place.',
+        link: '/admin/bookings',
+        linkText: 'Go to Admin Panel',
+        available: user?.role === 'ADMIN',
+        adminOnly: true
+    }
+];
 
     const stats = [
         { value: '4', label: 'Resources Available' },

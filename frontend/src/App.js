@@ -11,6 +11,9 @@ import Navbar from './components/navbar.js';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import CreateIncidentPage from './pages/CreateIncidentPage';
+import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
+import IncidentTicketDetailsPage from './pages/IncidentTicketDetailsPage';
 
 function AppContent() {
   const location = useLocation();
@@ -48,6 +51,33 @@ function AppContent() {
               element={
                 <ProtectedRoute adminOnly={true}>
                   <AdminBookingsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents"
+              element={
+                <ProtectedRoute>
+                  <IncidentMyTicketsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents/new"
+              element={
+                <ProtectedRoute>
+                  <CreateIncidentPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents/:ticketId"
+              element={
+                <ProtectedRoute>
+                  <IncidentTicketDetailsPage />
                 </ProtectedRoute>
               }
             />

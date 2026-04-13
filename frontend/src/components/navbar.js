@@ -44,6 +44,8 @@ function Navbar() {
                     <Link to="/" style={navLinkStyle('/')}>Home</Link>
                     <Link to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
                     <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>New Booking</Link>
+                    <Link to="/incidents" style={navLinkStyle('/incidents')}>My tickets</Link>
+                    <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
 
                     <div className="dropdown">
                         <button
