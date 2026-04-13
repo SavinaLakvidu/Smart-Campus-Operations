@@ -16,6 +16,7 @@ import CreateIncidentPage from './pages/CreateIncidentPage';
 import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
 import IncidentTicketDetailsPage from './pages/IncidentTicketDetailsPage';
 import AdminTicketManagementPage from './pages/AdminTicketManagementPage';
+import TechnicianTicketUpdatesPage from './pages/TechnicianTicketUpdatesPage';
 
 function AppContent() {
   const location = useLocation();
@@ -69,7 +70,7 @@ function AppContent() {
             <Route
               path="/incidents"
               element={
-                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN"]}>
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF"]}>
                   <IncidentMyTicketsPage />
                 </ProtectedRoute>
               }
@@ -78,8 +79,17 @@ function AppContent() {
             <Route
               path="/incidents/new"
               element={
-                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN"]}>
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF"]}>
                   <CreateIncidentPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/technician/tickets"
+              element={
+                <ProtectedRoute allowedRoles={["TECHNICIAN"]}>
+                  <TechnicianTicketUpdatesPage />
                 </ProtectedRoute>
               }
             />

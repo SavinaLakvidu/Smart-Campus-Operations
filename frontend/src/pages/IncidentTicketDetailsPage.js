@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 import {
     addTicketComment,
     deleteTicketAttachment,
@@ -27,6 +28,7 @@ function detailText(value) {
 function IncidentTicketDetailsPage() {
     const { ticketId } = useParams();
     const location = useLocation();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(true);
     const [ticket, setTicket] = useState(null);
     const [commentText, setCommentText] = useState('');
@@ -124,14 +126,20 @@ function IncidentTicketDetailsPage() {
         }
     }
 
+    const isTechnician = user?.role === 'TECHNICIAN';
+    const backLink = isTechnician ? '/technician/tickets' : '/incidents';
+    const backLabel = isTechnician ? 'Back To Ticket Updates' : 'Back To My Tickets';
+
     return (
         <div className="incident-shell">
             <div className="incident-page">
                 <h1 className="incident-headline">Incident Ticket Details</h1>
 
                 <div className="incident-actions" style={{ marginBottom: '14px' }}>
-                    <Link className="incident-btn-ghost" to="/incidents">Back To My Tickets</Link>
-                    <Link className="incident-btn-secondary" to="/incidents/new">Create Another</Link>
+                    <Link className="incident-btn-ghost" to={backLink}>{backLabel}</Link>
+                    {user?.role !== 'TECHNICIAN' && (
+                        <Link className="incident-btn-secondary" to="/incidents/new">Create Another</Link>
+                    )}
                 </div>
 
                 <div className="incident-card">
