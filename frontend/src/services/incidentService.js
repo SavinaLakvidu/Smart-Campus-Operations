@@ -1,25 +1,15 @@
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:8080';
-const DEFAULT_USERNAME = 'admin@campus.com';
-const DEFAULT_PASSWORD = 'password123';
-const USERNAME_KEY = 'incident.auth.username';
-const PASSWORD_KEY = 'incident.auth.password';
-
-function readCredentials() {
-    const username = localStorage.getItem(USERNAME_KEY) || DEFAULT_USERNAME;
-    const password = localStorage.getItem(PASSWORD_KEY) || DEFAULT_PASSWORD;
-    return { username, password };
-}
-
-function authHeader() {
-    const { username, password } = readCredentials();
-    return {
-        Authorization: `Basic ${btoa(`${username}:${password}`)}`
-    };
-}
+const api = axios.create({
+    baseURL: API_BASE,
+    withCredentials: true
+});
 
 function handleError(error) {
+    if (error.response?.status === 401) {
+        throw new Error('Unauthorized. Please login from the login page and try again.');
+    }
     if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
     }
@@ -27,17 +17,16 @@ function handleError(error) {
 }
 
 export function saveTicketApiCredentials(username, password) {
-    localStorage.setItem(USERNAME_KEY, username?.trim() || DEFAULT_USERNAME);
-    localStorage.setItem(PASSWORD_KEY, password || DEFAULT_PASSWORD);
+    return { username, password };
 }
 
 export function getTicketApiCredentials() {
-    return readCredentials();
+    return { username: '', password: '' };
 }
 
 export async function getResources() {
     try {
-        const response = await axios.get(`${API_BASE}/api/resources`);
+        const response = await api.get('/api/resources');
         return response.data;
     } catch (error) {
         handleError(error);
@@ -46,9 +35,7 @@ export async function getResources() {
 
 export async function createTicket(payload) {
     try {
-        const response = await axios.post(`${API_BASE}/api/v1/tickets`, payload, {
-            headers: authHeader()
-        });
+        const response = await api.post('/api/v1/tickets', payload);
         return response.data;
     } catch (error) {
         handleError(error);
@@ -57,10 +44,7 @@ export async function createTicket(payload) {
 
 export async function getMyTickets(params = {}) {
     try {
-        const response = await axios.get(`${API_BASE}/api/v1/tickets/my`, {
-            headers: authHeader(),
-            params
-        });
+        const response = await api.get('/api/v1/tickets/my', { params });
         return response.data;
     } catch (error) {
         handleError(error);
@@ -69,9 +53,7 @@ export async function getMyTickets(params = {}) {
 
 export async function getTicketById(ticketId) {
     try {
-        const response = await axios.get(`${API_BASE}/api/v1/tickets/${ticketId}`, {
-            headers: authHeader()
-        });
+        const response = await api.get(`/api/v1/tickets/${ticketId}`);
         return response.data;
     } catch (error) {
         handleError(error);
@@ -80,11 +62,7 @@ export async function getTicketById(ticketId) {
 
 export async function addTicketComment(ticketId, message) {
     try {
-        const response = await axios.post(
-            `${API_BASE}/api/v1/tickets/${ticketId}/comments`,
-            { message },
-            { headers: authHeader() }
-        );
+        const response = await api.post(`/api/v1/tickets/${ticketId}/comments`, { message });
         return response.data;
     } catch (error) {
         handleError(error);
@@ -93,9 +71,7 @@ export async function addTicketComment(ticketId, message) {
 
 export async function deleteTicketComment(ticketId, commentId) {
     try {
-        await axios.delete(`${API_BASE}/api/v1/tickets/${ticketId}/comments/${commentId}`, {
-            headers: authHeader()
-        });
+        await api.delete(`/api/v1/tickets/${ticketId}/comments/${commentId}`);
     } catch (error) {
         handleError(error);
     }
@@ -106,12 +82,11 @@ export async function uploadTicketAttachments(ticketId, files) {
         const formData = new FormData();
         Array.from(files).forEach((file) => formData.append('files', file));
 
-        const response = await axios.post(
-            `${API_BASE}/api/v1/tickets/${ticketId}/attachments`,
+        const response = await api.post(
+            `/api/v1/tickets/${ticketId}/attachments`,
             formData,
             {
                 headers: {
-                    ...authHeader(),
                     'Content-Type': 'multipart/form-data'
                 }
             }
@@ -124,9 +99,7 @@ export async function uploadTicketAttachments(ticketId, files) {
 
 export async function deleteTicketAttachment(ticketId, attachmentId) {
     try {
-        await axios.delete(`${API_BASE}/api/v1/tickets/${ticketId}/attachments/${attachmentId}`, {
-            headers: authHeader()
-        });
+        await api.delete(`/api/v1/tickets/${ticketId}/attachments/${attachmentId}`);
     } catch (error) {
         handleError(error);
     }
@@ -134,10 +107,9 @@ export async function deleteTicketAttachment(ticketId, attachmentId) {
 
 export async function downloadTicketAttachment(ticketId, attachmentId) {
     try {
-        const response = await axios.get(
-            `${API_BASE}/api/v1/tickets/${ticketId}/attachments/${attachmentId}`,
+        const response = await api.get(
+            `/api/v1/tickets/${ticketId}/attachments/${attachmentId}`,
             {
-                headers: authHeader(),
                 responseType: 'blob'
             }
         );
