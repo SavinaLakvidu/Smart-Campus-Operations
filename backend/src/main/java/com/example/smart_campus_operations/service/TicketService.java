@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 @Service
@@ -111,8 +112,10 @@ public class TicketService {
         User technician = userRepository.findById(request.getTechnicianId().intValue())
                 .orElseThrow(() -> new ResourceNotFoundException("Technician not found with id: " + request.getTechnicianId()));
 
-        if (technician.getRole() != UserRole.TECHNICIAN && technician.getRole() != UserRole.ADMIN) {
-            throw new BadRequestException("Assigned user must have TECHNICIAN or ADMIN role");
+        if (technician.getRole() != UserRole.TECHNICIAN
+                && technician.getRole() != UserRole.STAFF
+                && technician.getRole() != UserRole.ADMIN) {
+            throw new BadRequestException("Assigned user must have TECHNICIAN, STAFF, or ADMIN role");
         }
 
         ticket.setAssignedTechnician(technician);
@@ -168,6 +171,19 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
     }
 
+    @Transactional(readOnly = true)
+    public List<UserSummaryResponse> getAssignableUsers() {
+        User currentUser = currentUserService.getCurrentUser();
+        if (currentUser.getRole() != UserRole.ADMIN) {
+            throw new ForbiddenOperationException("Only admin can view assignable users");
+        }
+
+        return userRepository.findByRoleInOrderByUsernameAsc(EnumSet.of(UserRole.TECHNICIAN, UserRole.STAFF))
+                .stream()
+                .map(this::mapUserSummary)
+                .toList();
+    }
+
     public void validateTicketAccess(IncidentTicket ticket, User currentUser) {
         boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
         boolean isOwner = ticket.getCreatedBy().getUserId().equals(currentUser.getUserId());
@@ -218,10 +234,10 @@ public class TicketService {
                 predicates.add(cb.equal(root.get("assignedTechnician").get("userId"), assignedTechnicianId));
             }
 
-            if (currentUser.getRole() == UserRole.TECHNICIAN) {
+            if (currentUser.getRole() == UserRole.TECHNICIAN || currentUser.getRole() == UserRole.STAFF) {
                 predicates.add(cb.equal(root.get("assignedTechnician").get("userId"), currentUser.getUserId()));
             } else if (currentUser.getRole() != UserRole.ADMIN) {
-                throw new ForbiddenOperationException("Only admin or technician can view all tickets");
+                throw new ForbiddenOperationException("Only admin, technician, or staff can view all tickets");
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -230,12 +246,12 @@ public class TicketService {
 
     private void validateStatusUpdater(IncidentTicket ticket, User currentUser) {
         boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
-        boolean isAssignedTechnician = currentUser.getRole() == UserRole.TECHNICIAN
+        boolean isAssignedTechnician = (currentUser.getRole() == UserRole.TECHNICIAN || currentUser.getRole() == UserRole.STAFF)
                 && ticket.getAssignedTechnician() != null
                 && ticket.getAssignedTechnician().getUserId().equals(currentUser.getUserId());
 
         if (!isAdmin && !isAssignedTechnician) {
-            throw new ForbiddenOperationException("Only admin or assigned technician can update ticket status");
+            throw new ForbiddenOperationException("Only admin or assigned technician/staff can update ticket status");
         }
     }
 
