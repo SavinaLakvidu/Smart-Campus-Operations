@@ -1,6 +1,7 @@
 package com.example.smart_campus_operations.service;
 
 import com.example.smart_campus_operations.dto.request.CreateUserRequest;
+import com.example.smart_campus_operations.dto.request.UpdateUserRequest;
 import com.example.smart_campus_operations.entity.User;
 import com.example.smart_campus_operations.entity.enums.UserProvider;
 import com.example.smart_campus_operations.entity.enums.UserRole;
@@ -112,5 +113,58 @@ public class UserService {
         }
 
         return userRepository.findAll();
+    }
+
+    @Transactional
+    public User updateUser(Integer id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (request.getUsername() != null && !request.getUsername().isBlank()) {
+            user.setUsername(request.getUsername());
+        }
+
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+            boolean emailUsedByAnotherUser = userRepository.findByEmailIgnoreCase(request.getEmail())
+                    .map(existing -> !existing.getUserId().equals(id))
+                    .orElse(false);
+
+            if (emailUsedByAnotherUser) {
+                throw new RuntimeException("Email already exists");
+            }
+
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getRole() != null && !request.getRole().isBlank()) {
+            user.setRole(UserRole.valueOf(request.getRole().toUpperCase()));
+        }
+
+        if (request.getProvider() != null && !request.getProvider().isBlank()) {
+            UserProvider provider = UserProvider.valueOf(request.getProvider().toUpperCase());
+            user.setProvider(provider);
+
+            if (provider == UserProvider.LOCAL) {
+                if (request.getPassword() != null && !request.getPassword().isBlank()) {
+                    user.setPassword(passwordEncoder.encode(request.getPassword()));
+                }
+            } else if (provider == UserProvider.GOOGLE) {
+                user.setPassword(null);
+            }
+        } else {
+            if (request.getPassword() != null && !request.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userRepository.delete(user);
     }
 }
