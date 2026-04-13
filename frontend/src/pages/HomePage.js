@@ -6,57 +6,80 @@ function HomePage() {
     const { user, loading } = useAuth();
     const isLoggedIn = !!user;
 
-const features = [
-    {
-        icon: '🏛️',
-        title: 'Facilities & Assets Catalogue',
-        description: 'Browse all bookable resources including lecture halls, computer labs, meeting rooms, and equipment. Filter by type, capacity, and location to find exactly what you need.',
-        link: '/resources',
-        linkText: 'Browse Resources',
-        available: false
-    },
-    {
-        icon: '📅',
-        title: 'Booking Management',
-        description: 'Request bookings for any available resource by specifying your date, time, purpose, and expected attendees. Track the status of your bookings from pending to approved.',
-        link: '/bookings',
-        linkText: 'My Bookings',
-        available: true
-    },
-    {
-        icon: '➕',
-        title: 'Create a Booking',
-        description: 'Submit a new booking request quickly and easily. The system automatically checks for scheduling conflicts to ensure your time slot is available.',
-        link: '/bookings/new',
-        linkText: 'Book Now',
-        available: true
-    },
-    {
-        icon: '🔧',
-        title: 'Maintenance & Incident Ticketing',
-        description: 'Report faults, damaged equipment, or any incidents on campus. Attach photos as evidence, set priority levels, and track the resolution progress in real time.',
-        link: '/incidents/new',
-        linkText: 'Report Incident',
-        available: true
-    },
-    {
-        icon: '🔔',
-        title: 'Notifications',
-        description: 'Stay informed with real-time notifications for booking approvals, rejections, ticket status updates, and new comments. Never miss an important update.',
-        link: '/notifications',
-        linkText: 'View Notifications',
-        available: false
-    },
-    {
-        icon: '⚙️',
-        title: 'Admin Panel',
-        description: 'Administrators can review and approve or reject booking requests, manage resources, assign technicians to incidents, and oversee all campus operations from one place.',
-        link: '/admin/bookings',
-        linkText: 'Go to Admin Panel',
-        available: user?.role === 'ADMIN',
-        adminOnly: true
-    }
-];
+    const isAdmin = user?.role === 'ADMIN';
+    const isTechnician = user?.role === 'TECHNICIAN';
+    const isStaff = user?.role === 'STAFF';
+    const isStudent = user?.role === 'STUDENT';
+
+    const features = [
+        {
+            icon: '🏛️',
+            title: 'Facilities & Assets Catalogue',
+            description: 'Browse all bookable resources including lecture halls, computer labs, meeting rooms, and equipment. Filter by type, capacity, and location to find exactly what you need.',
+            link: '/resources',
+            linkText: 'Browse Resources',
+            available: false
+        },
+        {
+            icon: '📅',
+            title: 'Booking Management',
+            description: 'Request bookings for any available resource by specifying your date, time, purpose, and expected attendees. Track the status of your bookings from pending to approved.',
+            link: '/bookings',
+            linkText: 'My Bookings',
+            available: isLoggedIn
+        },
+        {
+            icon: '➕',
+            title: 'Create a Booking',
+            description: 'Submit a new booking request quickly and easily. The system automatically checks for scheduling conflicts to ensure your time slot is available.',
+            link: '/bookings/new',
+            linkText: 'Book Now',
+            available: isStudent || isStaff || isAdmin
+        },
+        {
+            icon: '🔧',
+            title: 'Maintenance & Incident Ticketing',
+            description: 'Report faults, damaged equipment, or any incidents on campus. Attach photos as evidence, set priority levels, and track the resolution progress in real time.',
+            link: '/incidents/new',
+            linkText: isTechnician || isAdmin ? 'Manage Incidents' : 'Report Incident',
+            available: isLoggedIn
+        },
+        {
+            icon: '🔔',
+            title: 'Notifications',
+            description: 'Stay informed with real-time notifications for booking approvals, rejections, ticket status updates, and new comments. Never miss an important update.',
+            link: '/notifications',
+            linkText: 'View Notifications',
+            available: false
+        },
+        {
+            icon: '🛠️',
+            title: 'Technician Panel',
+            description: 'Technicians can view assigned incidents, update ticket status, and add resolution notes for maintenance-related tasks.',
+            link: '/technician/tickets',
+            linkText: 'Go to Technician Panel',
+            available: isTechnician || isAdmin,
+            technicianOnly: true
+        },
+        {
+            icon: '👔',
+            title: 'Staff Area',
+            description: 'Staff members can access staff-specific operational tools and manage their assigned campus activities.',
+            link: '/staff/dashboard',
+            linkText: 'Go to Staff Area',
+            available: isStaff || isAdmin,
+            staffOnly: true
+        },
+        {
+            icon: '⚙️',
+            title: 'Admin Panel',
+            description: 'Administrators can review and approve or reject booking requests, manage resources, assign technicians to incidents, and oversee all campus operations from one place.',
+            link: '/admin/bookings',
+            linkText: 'Go to Admin Panel',
+            available: isAdmin,
+            adminOnly: true
+        }
+    ];
 
     const stats = [
         { value: '4', label: 'Resources Available' },
@@ -95,6 +118,7 @@ const features = [
                                     }}>
                                         Welcome back
                                     </p>
+
                                     <h1 style={{
                                         fontSize: '3rem',
                                         fontWeight: '700',
@@ -103,6 +127,7 @@ const features = [
                                     }}>
                                         {user?.username}
                                     </h1>
+
                                     <div style={{ marginBottom: '20px' }}>
                                         <span style={{
                                             backgroundColor: '#ffffff',
@@ -117,6 +142,7 @@ const features = [
                                             {user?.role}
                                         </span>
                                     </div>
+
                                     <p style={{
                                         color: '#bbbbbb',
                                         fontSize: '1.1rem',
@@ -126,22 +152,26 @@ const features = [
                                     }}>
                                         Manage your bookings, report incidents, and stay on top of campus operations — all in one place.
                                     </p>
+
                                     <div className="d-flex gap-3 flex-wrap">
-                                        <Link to="/bookings/new" style={{
-                                            backgroundColor: '#ffffff',
-                                            color: '#111111',
-                                            padding: '12px 28px',
-                                            fontWeight: '600',
-                                            fontSize: '0.95rem',
-                                            textDecoration: 'none',
-                                            borderRadius: '3px',
-                                            transition: 'opacity 0.2s'
-                                        }}
-                                            onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-                                            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-                                        >
-                                            Book a Resource
-                                        </Link>
+                                        {(isStudent || isStaff || isAdmin) && (
+                                            <Link to="/bookings/new" style={{
+                                                backgroundColor: '#ffffff',
+                                                color: '#111111',
+                                                padding: '12px 28px',
+                                                fontWeight: '600',
+                                                fontSize: '0.95rem',
+                                                textDecoration: 'none',
+                                                borderRadius: '3px',
+                                                transition: 'opacity 0.2s'
+                                            }}
+                                                onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+                                                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                                            >
+                                                Book a Resource
+                                            </Link>
+                                        )}
+
                                         <Link to="/bookings" style={{
                                             backgroundColor: 'transparent',
                                             color: '#ffffff',
@@ -158,6 +188,80 @@ const features = [
                                         >
                                             View My Bookings
                                         </Link>
+
+                                        <Link to="/incidents/new" style={{
+                                            backgroundColor: 'transparent',
+                                            color: '#ffffff',
+                                            padding: '12px 28px',
+                                            fontWeight: '600',
+                                            fontSize: '0.95rem',
+                                            textDecoration: 'none',
+                                            borderRadius: '3px',
+                                            border: '1px solid #555555',
+                                            transition: 'border-color 0.2s'
+                                        }}
+                                            onMouseEnter={e => e.currentTarget.style.borderColor = '#ffffff'}
+                                            onMouseLeave={e => e.currentTarget.style.borderColor = '#555555'}
+                                        >
+                                            Report Incident
+                                        </Link>
+
+                                        {(isTechnician || isAdmin) && (
+                                            <Link to="/technician/tickets" style={{
+                                                backgroundColor: 'transparent',
+                                                color: '#ffffff',
+                                                padding: '12px 28px',
+                                                fontWeight: '600',
+                                                fontSize: '0.95rem',
+                                                textDecoration: 'none',
+                                                borderRadius: '3px',
+                                                border: '1px solid #555555',
+                                                transition: 'border-color 0.2s'
+                                            }}
+                                                onMouseEnter={e => e.currentTarget.style.borderColor = '#ffffff'}
+                                                onMouseLeave={e => e.currentTarget.style.borderColor = '#555555'}
+                                            >
+                                                Technician Panel
+                                            </Link>
+                                        )}
+
+                                        {(isStaff || isAdmin) && (
+                                            <Link to="/staff/dashboard" style={{
+                                                backgroundColor: 'transparent',
+                                                color: '#ffffff',
+                                                padding: '12px 28px',
+                                                fontWeight: '600',
+                                                fontSize: '0.95rem',
+                                                textDecoration: 'none',
+                                                borderRadius: '3px',
+                                                border: '1px solid #555555',
+                                                transition: 'border-color 0.2s'
+                                            }}
+                                                onMouseEnter={e => e.currentTarget.style.borderColor = '#ffffff'}
+                                                onMouseLeave={e => e.currentTarget.style.borderColor = '#555555'}
+                                            >
+                                                Staff Area
+                                            </Link>
+                                        )}
+
+                                        {isAdmin && (
+                                            <Link to="/admin/bookings" style={{
+                                                backgroundColor: 'transparent',
+                                                color: '#ffffff',
+                                                padding: '12px 28px',
+                                                fontWeight: '600',
+                                                fontSize: '0.95rem',
+                                                textDecoration: 'none',
+                                                borderRadius: '3px',
+                                                border: '1px solid #555555',
+                                                transition: 'border-color 0.2s'
+                                            }}
+                                                onMouseEnter={e => e.currentTarget.style.borderColor = '#ffffff'}
+                                                onMouseLeave={e => e.currentTarget.style.borderColor = '#555555'}
+                                            >
+                                                Admin Panel
+                                            </Link>
+                                        )}
                                     </div>
                                 </>
                             ) : (
@@ -296,6 +400,7 @@ const features = [
                                 <div style={{ fontSize: '2rem', marginBottom: '16px' }}>
                                     {feature.icon}
                                 </div>
+
                                 <h5 style={{
                                     fontWeight: '700',
                                     color: '#111111',
@@ -304,6 +409,7 @@ const features = [
                                 }}>
                                     {feature.title}
                                 </h5>
+
                                 <p style={{
                                     color: '#666666',
                                     fontSize: '0.9rem',
@@ -313,6 +419,7 @@ const features = [
                                 }}>
                                     {feature.description}
                                 </p>
+
                                 <div>
                                     {feature.available ? (
                                         <Link
@@ -344,6 +451,30 @@ const features = [
                                             letterSpacing: '0.5px'
                                         }}>
                                             Admin Access Only
+                                        </span>
+                                    ) : feature.technicianOnly ? (
+                                        <span style={{
+                                            backgroundColor: '#f0f0f0',
+                                            color: '#888888',
+                                            padding: '6px 14px',
+                                            fontSize: '0.8rem',
+                                            fontWeight: '600',
+                                            borderRadius: '3px',
+                                            letterSpacing: '0.5px'
+                                        }}>
+                                            Technician Access Only
+                                        </span>
+                                    ) : feature.staffOnly ? (
+                                        <span style={{
+                                            backgroundColor: '#f0f0f0',
+                                            color: '#888888',
+                                            padding: '6px 14px',
+                                            fontSize: '0.8rem',
+                                            fontWeight: '600',
+                                            borderRadius: '3px',
+                                            letterSpacing: '0.5px'
+                                        }}>
+                                            Staff Access Only
                                         </span>
                                     ) : (
                                         <span style={{
