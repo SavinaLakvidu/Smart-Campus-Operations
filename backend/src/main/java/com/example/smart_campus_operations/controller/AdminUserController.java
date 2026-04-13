@@ -1,6 +1,7 @@
 package com.example.smart_campus_operations.controller;
 
 import com.example.smart_campus_operations.dto.request.CreateUserRequest;
+import com.example.smart_campus_operations.dto.request.UpdateUserRequest;
 import com.example.smart_campus_operations.dto.response.UserResponse;
 import com.example.smart_campus_operations.entity.User;
 import com.example.smart_campus_operations.service.UserService;
@@ -55,5 +56,35 @@ public class AdminUserController {
                 .toList();
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Integer id,
+                                        @RequestBody UpdateUserRequest request) {
+        try {
+            User user = userService.updateUser(id, request);
+
+            return ResponseEntity.ok(
+                    new UserResponse(
+                            user.getUserId(),
+                            user.getUsername(),
+                            user.getEmail(),
+                            user.getRole().name(),
+                            user.getProvider().name()
+                    )
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
