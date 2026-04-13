@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import BookingListPage from './pages/BookingListPage.js';
 import CreateBookingPage from './pages/CreateBookingPage.js';
 import AdminBookingsPage from './pages/AdminBookingPage.js';
+import AdminUsersPage from './pages/AdminUsersPage.js';
 import HomePage from './pages/HomePage';
 import Navbar from './components/navbar.js';
 import LoginPage from './pages/LoginPage';
@@ -28,7 +29,7 @@ function AppContent() {
             <Route
               path="/bookings"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
                   <BookingListPage />
                 </ProtectedRoute>
               }
@@ -37,7 +38,7 @@ function AppContent() {
             <Route
               path="/bookings/new"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "ADMIN"]}>
                   <CreateBookingPage />
                 </ProtectedRoute>
               }
@@ -46,8 +47,17 @@ function AppContent() {
             <Route
               path="/admin/bookings"
               element={
-                <ProtectedRoute adminOnly={true}>
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminBookingsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminUsersPage />
                 </ProtectedRoute>
               }
             />
