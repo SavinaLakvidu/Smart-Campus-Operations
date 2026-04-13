@@ -4,8 +4,6 @@ import { toast } from 'react-toastify';
 import {
     createTicket,
     getResources,
-    getTicketApiCredentials,
-    saveTicketApiCredentials,
     uploadTicketAttachments
 } from '../services/incidentService';
 import './incident.css';
@@ -50,7 +48,6 @@ function CreateIncidentPage() {
     const [submitting, setSubmitting] = useState(false);
     const [form, setForm] = useState(initialForm);
     const [errors, setErrors] = useState({});
-    const [credentials, setCredentials] = useState(getTicketApiCredentials());
     const [selectedFiles, setSelectedFiles] = useState([]);
 
     useEffect(() => {
@@ -130,7 +127,6 @@ function CreateIncidentPage() {
 
         setSubmitting(true);
         try {
-            saveTicketApiCredentials(credentials.username, credentials.password);
             const payload = {
                 resourceId: form.resourceId ? Number(form.resourceId) : null,
                 locationText: form.locationText.trim() || null,
@@ -170,33 +166,6 @@ function CreateIncidentPage() {
                 <p className="incident-subtext">
                     Submit full incident details and jump straight to your ticket after submission.
                 </p>
-
-                <div className="incident-card" style={{ marginBottom: '14px' }}>
-                    <h2 style={{ fontSize: '1.05rem', marginBottom: '12px' }}>Ticket API Credentials (Basic Auth)</h2>
-                    <div className="incident-grid">
-                        <div>
-                            <label className="incident-label">Email / Username</label>
-                            <input
-                                className="incident-input"
-                                name="username"
-                                value={credentials.username}
-                                onChange={(e) => setCredentials((prev) => ({ ...prev, username: e.target.value }))}
-                                placeholder="student1@smartcampus.edu"
-                            />
-                        </div>
-                        <div>
-                            <label className="incident-label">Password</label>
-                            <input
-                                type="password"
-                                className="incident-input"
-                                name="password"
-                                value={credentials.password}
-                                onChange={(e) => setCredentials((prev) => ({ ...prev, password: e.target.value }))}
-                                placeholder="password"
-                            />
-                        </div>
-                    </div>
-                </div>
 
                 <form className="incident-card" onSubmit={handleSubmit}>
                     <div className="incident-grid">

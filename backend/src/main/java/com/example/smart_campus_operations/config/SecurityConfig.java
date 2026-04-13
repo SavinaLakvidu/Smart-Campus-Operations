@@ -5,6 +5,7 @@ import com.example.smart_campus_operations.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -41,6 +44,12 @@ http
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .defaultSuccessUrl("http://localhost:3000/", true)
                         .failureUrl("http://localhost:3000/login")
+                )
+                .exceptionHandling(ex -> ex
+                    .defaultAuthenticationEntryPointFor(
+                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                        new AntPathRequestMatcher("/api/**")
+                    )
                 )
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
