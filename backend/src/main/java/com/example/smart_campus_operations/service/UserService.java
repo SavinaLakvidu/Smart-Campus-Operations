@@ -42,4 +42,9 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
+
+    public User getUserByEmail(String email) {
+    return userRepository.findByEmailIgnoreCase(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }

@@ -1,14 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
-const MOCK_USER = {
-    name: 'John Student',
-    role: 'STUDENT'
-};
+import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
     const location = useLocation();
-    const isLoggedIn = true;
+    const { user, logout, loading } = useAuth();
+    const isLoggedIn = !!user;
+
+    if (loading) return null;
 
     const navLinkStyle = (path) => ({
         color: location.pathname === path ? '#ffffff' : '#aaaaaa',
@@ -31,7 +30,6 @@ function Navbar() {
         }}>
             <div className="container d-flex align-items-center justify-content-between" style={{ height: '60px' }}>
 
-                {/* Brand */}
                 <Link to="/" style={{
                     color: '#ffffff',
                     textDecoration: 'none',
@@ -42,7 +40,6 @@ function Navbar() {
                     Smart Campus
                 </Link>
 
-                {/* Nav Links */}
                 <div className="d-none d-lg-flex align-items-center gap-1">
                     <Link to="/" style={navLinkStyle('/')}>Home</Link>
                     <Link to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
@@ -50,7 +47,6 @@ function Navbar() {
                     <Link to="/incidents" style={navLinkStyle('/incidents')}>My tickets</Link>
                     <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
 
-                    {/* Dropdown */}
                     <div className="dropdown">
                         <button
                             className="dropdown-toggle"
@@ -76,7 +72,7 @@ function Navbar() {
                                     Notifications
                                 </Link>
                             </li>
-                            {MOCK_USER.role === 'ADMIN' && (
+                            {user?.role === 'ADMIN' && (
                                 <>
                                     <li><hr className="dropdown-divider" /></li>
                                     <li>
@@ -90,7 +86,6 @@ function Navbar() {
                     </div>
                 </div>
 
-                {/* User Section */}
                 <div className="d-flex align-items-center gap-3">
                     {isLoggedIn ? (
                         <>
@@ -103,25 +98,27 @@ function Navbar() {
                                 padding: '3px 10px',
                                 borderRadius: '2px'
                             }}>
-                                {MOCK_USER.role}
+                                {user?.role}
                             </span>
                             <span style={{
                                 color: '#ffffff',
                                 fontSize: '0.9rem',
                                 fontWeight: '500'
                             }}>
-                                {MOCK_USER.name}
+                                {user?.username}
                             </span>
-                            <button style={{
-                                backgroundColor: 'transparent',
-                                border: '1px solid #444444',
-                                color: '#aaaaaa',
-                                fontSize: '0.8rem',
-                                padding: '5px 14px',
-                                borderRadius: '3px',
-                                cursor: 'pointer',
-                                transition: 'border-color 0.2s, color 0.2s'
-                            }}
+                            <button
+                                onClick={logout}
+                                style={{
+                                    backgroundColor: 'transparent',
+                                    border: '1px solid #444444',
+                                    color: '#aaaaaa',
+                                    fontSize: '0.8rem',
+                                    padding: '5px 14px',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer',
+                                    transition: 'border-color 0.2s, color 0.2s'
+                                }}
                                 onMouseEnter={e => {
                                     e.currentTarget.style.borderColor = '#ffffff';
                                     e.currentTarget.style.color = '#ffffff';
