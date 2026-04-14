@@ -5,7 +5,6 @@ import com.example.smart_campus_operations.dto.request.CreateTicketRequest;
 import com.example.smart_campus_operations.dto.request.UpdateTicketStatusRequest;
 import com.example.smart_campus_operations.dto.response.TicketResponse;
 import com.example.smart_campus_operations.dto.response.TicketSummaryResponse;
-import com.example.smart_campus_operations.dto.response.UserSummaryResponse;
 import com.example.smart_campus_operations.entity.enums.TicketCategory;
 import com.example.smart_campus_operations.entity.enums.TicketPriority;
 import com.example.smart_campus_operations.entity.enums.TicketStatus;
@@ -20,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tickets")
@@ -45,7 +42,7 @@ public class TicketController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('TECHNICIAN','STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('TECHNICIAN','ADMIN')")
     @Operation(summary = "View all tickets with filters")
     public ResponseEntity<Page<TicketSummaryResponse>> getAllTickets(
             @RequestParam(required = false) TicketStatus status,
@@ -55,13 +52,6 @@ public class TicketController {
             @RequestParam(required = false) Long assignedTechnicianId,
             @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
         return ResponseEntity.ok(ticketService.getAllTickets(status, priority, category, resourceId, assignedTechnicianId, pageable));
-    }
-
-    @GetMapping("/assignees")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Get users that can be assigned to tickets")
-    public ResponseEntity<List<UserSummaryResponse>> getAssignableUsers() {
-        return ResponseEntity.ok(ticketService.getAssignableUsers());
     }
 
     @GetMapping("/{ticketId}")
@@ -80,7 +70,7 @@ public class TicketController {
     }
 
     @PatchMapping("/{ticketId}/status")
-    @PreAuthorize("hasAnyRole('TECHNICIAN','STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('TECHNICIAN','ADMIN')")
     @Operation(summary = "Update ticket status")
     public ResponseEntity<TicketResponse> updateStatus(@PathVariable Long ticketId,
                                                        @Valid @RequestBody UpdateTicketStatusRequest request) {

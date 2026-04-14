@@ -22,7 +22,6 @@ function Navbar() {
     const isAdmin = user?.role === 'ADMIN';
     const isTechnician = user?.role === 'TECHNICIAN';
     const isStaff = user?.role === 'STAFF';
-    const isStudent = user?.role === 'STUDENT';
 
     return (
         <nav style={{
@@ -51,18 +50,8 @@ function Navbar() {
                     {isLoggedIn && (
                         <>
                             <Link to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
-
-                            {(isStudent || isStaff || isAdmin) && (
+                            {(user?.role === 'STUDENT' || isStaff || isAdmin) && (
                                 <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>New Booking</Link>
-                            )}
-
-                            {isAdmin ? (
-                                <Link to="/admin/tickets" style={navLinkStyle('/admin/tickets')}>Ticket Management</Link>
-                            ) : (
-                                <>
-                                    <Link to="/incidents" style={navLinkStyle('/incidents')}>My Tickets</Link>
-                                    <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
-                                </>
                             )}
                         </>
                     )}
@@ -83,21 +72,11 @@ function Navbar() {
                         </button>
 
                         <ul className="dropdown-menu dropdown-menu-dark">
-                            {!isAdmin && (
-                                <li>
-                                    <Link className="dropdown-item" to="/incidents">
-                                        Incidents
-                                    </Link>
-                                </li>
-                            )}
-
-                            {isAdmin && (
-                                <li>
-                                    <Link className="dropdown-item" to="/admin/tickets">
-                                        Ticket Management
-                                    </Link>
-                                </li>
-                            )}
+                            <li>
+                                <Link className="dropdown-item" to="/incidents">
+                                    Incidents
+                                </Link>
+                            </li>
 
                             <li>
                                 <Link className="dropdown-item" to="/notifications">
