@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.smart_campus_operations.entity.User;
+import com.example.smart_campus_operations.service.UserService;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Map;
@@ -18,21 +21,23 @@ import java.util.Map;
 public class BookingController {
 
     private final BookingService bookingService;
-
+    private final UserService userService;
     // POST /api/bookings — create a booking
     @PostMapping
     public ResponseEntity<BookingResponseDTO> createBooking(
             @Valid @RequestBody BookingRequestDTO dto,
-            @RequestParam Integer userId) {
+            Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(bookingService.createBooking(dto, userId));
+                .body(bookingService.createBooking(dto, user.getUserId()));
     }
 
-    // GET /api/bookings/my?userId=1 — get current user's bookings
+    // GET /api/bookings/my — get current user's bookings
     @GetMapping("/my")
     public ResponseEntity<List<BookingResponseDTO>> getMyBookings(
-            @RequestParam Integer userId) {
-        return ResponseEntity.ok(bookingService.getUserBookings(userId));
+            Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        return ResponseEntity.ok(bookingService.getUserBookings(user.getUserId()));
     }
 
     // GET /api/bookings — get all bookings (admin only)
@@ -53,16 +58,18 @@ public class BookingController {
             @PathVariable Integer id,
             @RequestParam String decision,
             @RequestParam(required = false) String reason,
-            @RequestParam Integer adminId) {
+            Authentication authentication) {
+        User admin = userService.getUserByEmail(authentication.getName());
         return ResponseEntity.ok(
-                bookingService.decideBooking(id, decision, reason, adminId));
+                bookingService.decideBooking(id, decision, reason, admin.getUserId()));
     }
 
     // PATCH /api/bookings/{id}/cancel — cancel a booking
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<BookingResponseDTO> cancelBooking(
             @PathVariable Integer id,
-            @RequestParam Integer userId) {
-        return ResponseEntity.ok(bookingService.cancelBooking(id, userId));
+            Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        return ResponseEntity.ok(bookingService.cancelBooking(id, user.getUserId()));
     }
 }
