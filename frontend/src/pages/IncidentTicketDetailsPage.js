@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 import {
     addTicketComment,
+    deleteTicket,
     deleteTicketAttachment,
     deleteTicketComment,
     downloadTicketAttachment,
@@ -27,6 +29,8 @@ function detailText(value) {
 function IncidentTicketDetailsPage() {
     const { ticketId } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(true);
     const [ticket, setTicket] = useState(null);
     const [commentText, setCommentText] = useState('');
@@ -124,14 +128,53 @@ function IncidentTicketDetailsPage() {
         }
     }
 
+    async function handleDeleteTicket() {
+        const confirmed = window.confirm('Delete this OPEN ticket? This cannot be undone.');
+        if (!confirmed) {
+            return;
+        }
+
+        setBusyAction('delete-ticket');
+        try {
+            await deleteTicket(ticketId);
+            toast.success('Ticket deleted successfully');
+            navigate('/incidents');
+        } catch (error) {
+            toast.error(error.message);
+        } finally {
+            setBusyAction('');
+        }
+    }
+
+    const isTechnician = user?.role === 'TECHNICIAN';
+    const backLink = isTechnician ? '/technician/tickets' : '/incidents';
+    const backLabel = isTechnician ? 'Back To Ticket Updates' : 'Back To My Tickets';
+    const isOwner = ticket && Number(ticket.createdBy?.id) === Number(user?.userId);
+    const canEditOrDelete = isOwner && ticket?.status === 'OPEN';
+
     return (
         <div className="incident-shell">
             <div className="incident-page">
                 <h1 className="incident-headline">Incident Ticket Details</h1>
 
                 <div className="incident-actions" style={{ marginBottom: '14px' }}>
-                    <Link className="incident-btn-ghost" to="/incidents">Back To My Tickets</Link>
-                    <Link className="incident-btn-secondary" to="/incidents/new">Create Another</Link>
+                    <Link className="incident-btn-ghost" to={backLink}>{backLabel}</Link>
+                    {canEditOrDelete && (
+                        <Link className="incident-btn-primary" to={`/incidents/${ticketId}/edit`}>Edit Ticket</Link>
+                    )}
+                    {canEditOrDelete && (
+                        <button
+                            className="incident-btn-secondary"
+                            type="button"
+                            onClick={handleDeleteTicket}
+                            disabled={busyAction === 'delete-ticket'}
+                        >
+                            {busyAction === 'delete-ticket' ? 'Deleting...' : 'Delete Ticket'}
+                        </button>
+                    )}
+                    {user?.role !== 'TECHNICIAN' && (
+                        <Link className="incident-btn-secondary" to="/incidents/new">Create Another</Link>
+                    )}
                 </div>
 
                 <div className="incident-card">
@@ -212,14 +255,16 @@ function IncidentTicketDetailsPage() {
                                                         >
                                                             Download
                                                         </button>
-                                                        <button
-                                                            type="button"
-                                                            className="incident-btn-ghost"
-                                                            onClick={() => handleDeleteAttachment(attachment.id)}
-                                                            disabled={busyAction === `delete-attachment-${attachment.id}`}
-                                                        >
-                                                            {busyAction === `delete-attachment-${attachment.id}` ? 'Deleting...' : 'Delete'}
-                                                        </button>
+                                                        {!isTechnician && (
+                                                            <button
+                                                                type="button"
+                                                                className="incident-btn-ghost"
+                                                                onClick={() => handleDeleteAttachment(attachment.id)}
+                                                                disabled={busyAction === `delete-attachment-${attachment.id}`}
+                                                            >
+                                                                {busyAction === `delete-attachment-${attachment.id}` ? 'Deleting...' : 'Delete'}
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}

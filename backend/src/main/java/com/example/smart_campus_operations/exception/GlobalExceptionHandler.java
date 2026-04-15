@@ -48,6 +48,30 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    // 400 - Invalid ticket state transitions/actions
+    @ExceptionHandler(InvalidTicketStateException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTicketState(InvalidTicketStateException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.builder()
+                        .status(400)
+                        .error("Invalid Ticket State")
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+
+    // 403 - Forbidden operation
+    @ExceptionHandler(ForbiddenOperationException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenOperationException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.builder()
+                        .status(403)
+                        .error("Forbidden")
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+
     // 401 - Unauthorized
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex) {

@@ -60,8 +60,15 @@ function Navbar() {
                                 <Link to="/admin/tickets" style={navLinkStyle('/admin/tickets')}>Ticket Management</Link>
                             ) : (
                                 <>
-                                    <Link to="/incidents" style={navLinkStyle('/incidents')}>My Tickets</Link>
-                                    <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
+                                    {(isStudent || isStaff) && (
+                                        <>
+                                            <Link to="/incidents" style={navLinkStyle('/incidents')}>My Tickets</Link>
+                                            <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
+                                        </>
+                                    )}
+                                    {isTechnician && (
+                                        <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Ticket Updates</Link>
+                                    )}
                                 </>
                             )}
                         </>
@@ -83,7 +90,7 @@ function Navbar() {
                         </button>
 
                         <ul className="dropdown-menu dropdown-menu-dark">
-                            {!isAdmin && (
+                            {(isStudent || isStaff) && (
                                 <li>
                                     <Link className="dropdown-item" to="/incidents">
                                         Incidents
