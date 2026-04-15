@@ -60,6 +60,23 @@ export async function getTicketById(ticketId) {
     }
 }
 
+export async function updateTicket(ticketId, payload) {
+    try {
+        const response = await api.put(`/api/v1/tickets/${ticketId}`, payload);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function deleteTicket(ticketId) {
+    try {
+        await api.delete(`/api/v1/tickets/${ticketId}`);
+    } catch (error) {
+        handleError(error);
+    }
+}
+
 export async function getAllTickets(params = {}) {
     try {
         const response = await api.get('/api/v1/tickets', { params });

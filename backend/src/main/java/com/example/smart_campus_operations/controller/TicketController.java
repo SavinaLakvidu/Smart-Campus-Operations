@@ -2,6 +2,7 @@ package com.example.smart_campus_operations.controller;
 
 import com.example.smart_campus_operations.dto.request.AssignTechnicianRequest;
 import com.example.smart_campus_operations.dto.request.CreateTicketRequest;
+import com.example.smart_campus_operations.dto.request.UpdateTicketRequest;
 import com.example.smart_campus_operations.dto.request.UpdateTicketStatusRequest;
 import com.example.smart_campus_operations.dto.response.TicketResponse;
 import com.example.smart_campus_operations.dto.response.TicketSummaryResponse;
@@ -71,6 +72,22 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getTicketById(ticketId));
     }
 
+    @PutMapping("/{ticketId}")
+    @PreAuthorize("hasAnyRole('STUDENT','STAFF','ADMIN')")
+    @Operation(summary = "Update ticket details (creator only, OPEN status only)")
+    public ResponseEntity<TicketResponse> updateTicket(@PathVariable Long ticketId,
+                                                       @Valid @RequestBody UpdateTicketRequest request) {
+        return ResponseEntity.ok(ticketService.updateTicket(ticketId, request));
+    }
+
+    @DeleteMapping("/{ticketId}")
+    @PreAuthorize("hasAnyRole('STUDENT','STAFF','ADMIN')")
+    @Operation(summary = "Delete ticket (creator only, OPEN status only)")
+    public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId) {
+        ticketService.deleteTicket(ticketId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{ticketId}/assign")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Assign technician to a ticket")
@@ -80,7 +97,7 @@ public class TicketController {
     }
 
     @PatchMapping("/{ticketId}/status")
-    @PreAuthorize("hasAnyRole('TECHNICIAN','STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('TECHNICIAN','ADMIN')")
     @Operation(summary = "Update ticket status")
     public ResponseEntity<TicketResponse> updateStatus(@PathVariable Long ticketId,
                                                        @Valid @RequestBody UpdateTicketStatusRequest request) {

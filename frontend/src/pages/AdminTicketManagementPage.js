@@ -22,20 +22,18 @@ function formatDate(value) {
 }
 
 function getNextStatuses(status) {
-    if (status === 'OPEN') {
-        return ['IN_PROGRESS', 'REJECTED'];
-    }
-    if (status === 'IN_PROGRESS') {
-        return ['RESOLVED', 'REJECTED'];
-    }
-    if (status === 'RESOLVED') {
-        return ['CLOSED'];
+    if (status === 'OPEN' || status === 'IN_PROGRESS') {
+        return ['REJECTED'];
     }
     return [];
 }
 
 function normalizeFilterValue(value) {
     return value === 'ALL' ? '' : value;
+}
+
+function isLockedForAdminActions(status) {
+    return status === 'RESOLVED' || status === 'REJECTED';
 }
 
 function AdminTicketManagementPage() {
@@ -64,6 +62,7 @@ function AdminTicketManagementPage() {
     const [updatingStatus, setUpdatingStatus] = useState(false);
 
     const transitionOptions = useMemo(() => getNextStatuses(selectedTicket?.status), [selectedTicket]);
+    const actionsLocked = isLockedForAdminActions(selectedTicket?.status);
 
     const loadTickets = async () => {
         setLoadingTickets(true);
@@ -132,7 +131,11 @@ function AdminTicketManagementPage() {
             return;
         }
         if (!selectedAssigneeId) {
-            toast.error('Please choose a technician or staff member.');
+            toast.error('Please choose a technician.');
+            return;
+        }
+        if (actionsLocked) {
+            toast.error('Resolved or rejected tickets cannot be assigned.');
             return;
         }
 
@@ -155,6 +158,10 @@ function AdminTicketManagementPage() {
         }
         if (!statusForm.status) {
             toast.error('Please select a status transition.');
+            return;
+        }
+        if (actionsLocked) {
+            toast.error('Resolved or rejected tickets cannot be updated by admin.');
             return;
         }
 
@@ -342,15 +349,15 @@ function AdminTicketManagementPage() {
                                 </div>
 
                                 <form onSubmit={handleAssign} className="incident-helper-box" style={{ marginBottom: '16px' }}>
-                                    <div className="incident-helper-title">Assign Technician/Staff</div>
+                                    <div className="incident-helper-title">Assign Technician</div>
                                     <label className="incident-label">Assignee</label>
                                     <select
                                         className="incident-select"
                                         value={selectedAssigneeId}
                                         onChange={(e) => setSelectedAssigneeId(e.target.value)}
-                                        disabled={loadingAssignees || assigning}
+                                        disabled={loadingAssignees || assigning || actionsLocked}
                                     >
-                                        <option value="">Select assignee</option>
+                                        <option value="">Select technician</option>
                                         {assignees.map((person) => (
                                             <option key={person.id} value={person.id}>
                                                 {person.fullName} ({person.role})
@@ -362,7 +369,7 @@ function AdminTicketManagementPage() {
                                         <button
                                             type="submit"
                                             className="incident-btn-primary"
-                                            disabled={loadingAssignees || assigning}
+                                            disabled={loadingAssignees || assigning || actionsLocked}
                                         >
                                             {assigning ? 'Assigning...' : 'Update Assignment'}
                                         </button>
@@ -370,32 +377,19 @@ function AdminTicketManagementPage() {
                                 </form>
 
                                 <form onSubmit={handleStatusUpdate} className="incident-helper-box">
-                                    <div className="incident-helper-title">Update Workflow Status</div>
+                                    <div className="incident-helper-title">Reject Ticket</div>
                                     <label className="incident-label">Next status</label>
                                     <select
                                         className="incident-select"
                                         value={statusForm.status}
                                         onChange={(e) => setStatusForm((prev) => ({ ...prev, status: e.target.value }))}
-                                        disabled={updatingStatus || transitionOptions.length === 0}
+                                        disabled={updatingStatus || transitionOptions.length === 0 || actionsLocked}
                                     >
-                                        <option value="">Select next status</option>
+                                        <option value="">Select status</option>
                                         {transitionOptions.map((status) => (
                                             <option key={status} value={status}>{status}</option>
                                         ))}
                                     </select>
-
-                                    {statusForm.status === 'RESOLVED' ? (
-                                        <>
-                                            <label className="incident-label" style={{ marginTop: '10px' }}>Resolution Notes</label>
-                                            <textarea
-                                                className="incident-textarea"
-                                                value={statusForm.resolutionNotes}
-                                                onChange={(e) => setStatusForm((prev) => ({ ...prev, resolutionNotes: e.target.value }))}
-                                                placeholder="Describe how the issue was fixed"
-                                                maxLength={2000}
-                                            />
-                                        </>
-                                    ) : null}
 
                                     {statusForm.status === 'REJECTED' ? (
                                         <>
@@ -412,7 +406,13 @@ function AdminTicketManagementPage() {
 
                                     {transitionOptions.length === 0 ? (
                                         <div className="incident-meta" style={{ marginTop: '10px' }}>
-                                            No further transitions available for this ticket.
+                                            Admin can reject tickets that are OPEN or IN_PROGRESS.
+                                        </div>
+                                    ) : null}
+
+                                    {actionsLocked ? (
+                                        <div className="incident-meta" style={{ marginTop: '10px' }}>
+                                            This ticket is {selectedTicket.status}. Admin cannot assign or update it.
                                         </div>
                                     ) : null}
 
@@ -420,7 +420,7 @@ function AdminTicketManagementPage() {
                                         <button
                                             type="submit"
                                             className="incident-btn-primary"
-                                            disabled={updatingStatus || transitionOptions.length === 0}
+                                            disabled={updatingStatus || transitionOptions.length === 0 || actionsLocked}
                                         >
                                             {updatingStatus ? 'Updating...' : 'Update Status'}
                                         </button>

@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import CreateIncidentPage from './pages/CreateIncidentPage';
+import EditIncidentPage from './pages/EditIncidentPage';
 import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
 import IncidentTicketDetailsPage from './pages/IncidentTicketDetailsPage';
 import AdminTicketManagementPage from './pages/AdminTicketManagementPage';
@@ -81,6 +82,15 @@ function AppContent() {
               element={
                 <ProtectedRoute allowedRoles={["STUDENT", "STAFF"]}>
                   <CreateIncidentPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents/:ticketId/edit"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "ADMIN"]}>
+                  <EditIncidentPage />
                 </ProtectedRoute>
               }
             />
