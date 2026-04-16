@@ -306,8 +306,8 @@ function IncidentTicketDetailsPage() {
                                 </div>
                             </div>
 
-                            <div className="incident-card" style={{ marginTop: '12px', padding: '16px' }}>
-                                <h3 style={{ fontSize: '1.05rem', marginBottom: '12px' }}>Comments</h3>
+                            <div className="incident-card incident-comments-card" style={{ marginTop: '12px', padding: '16px' }}>
+                                <h3 className="incident-comments-header" style={{ fontSize: '1.05rem', marginBottom: '12px' }}>Comments</h3>
                                 <form onSubmit={handleAddComment}>
                                     <div className="incident-grid">
                                         <div className="incident-grid-full">
@@ -334,7 +334,7 @@ function IncidentTicketDetailsPage() {
                                     ) : (
                                         <div className="incident-list">
                                             {ticket.comments.map((comment) => (
-                                                <div key={comment.id} className="incident-item">
+                                                <div key={comment.id} className="incident-item incident-comment-item">
                                                     <div className="incident-item-top">
                                                         <strong>{comment.author?.fullName || '-'}</strong>
                                                         <span className="incident-meta">{formatDate(comment.updatedAt)}</span>
@@ -350,16 +350,16 @@ function IncidentTicketDetailsPage() {
                                                             />
                                                         </div>
                                                     ) : (
-                                                        <div style={{ whiteSpace: 'pre-wrap', marginTop: '8px' }}>{detailText(comment.message)}</div>
+                                                        <div className="incident-comment-text">{detailText(comment.message)}</div>
                                                     )}
-                                                    <div className="incident-meta" style={{ marginTop: '6px' }}>
+                                                    <div className="incident-comment-meta">
                                                         {comment.edited ? 'Edited' : 'Original'} • {comment.deleted ? 'Deleted' : 'Visible'}
                                                     </div>
                                                     <div className="incident-actions" style={{ marginTop: '10px' }}>
                                                         {!comment.deleted && Number(comment.author?.id) === currentUserId && editingCommentId !== comment.id ? (
                                                             <button
                                                                 type="button"
-                                                                className="incident-btn-ghost"
+                                                                className="incident-btn-ghost incident-btn-comment-edit"
                                                                 onClick={() => startEditComment(comment)}
                                                             >
                                                                 Edit Comment
@@ -370,7 +370,7 @@ function IncidentTicketDetailsPage() {
                                                             <>
                                                                 <button
                                                                     type="button"
-                                                                    className="incident-btn-primary"
+                                                                    className="incident-btn-primary incident-btn-comment-save"
                                                                     onClick={() => handleSaveCommentEdit(comment.id)}
                                                                     disabled={busyAction === `edit-comment-${comment.id}`}
                                                                 >
@@ -378,7 +378,7 @@ function IncidentTicketDetailsPage() {
                                                                 </button>
                                                                 <button
                                                                     type="button"
-                                                                    className="incident-btn-ghost"
+                                                                    className="incident-btn-ghost incident-btn-comment-cancel"
                                                                     onClick={cancelEditComment}
                                                                     disabled={busyAction === `edit-comment-${comment.id}`}
                                                                 >
@@ -387,10 +387,10 @@ function IncidentTicketDetailsPage() {
                                                             </>
                                                         ) : null}
 
-                                                        {isOwner ? (
+                                                        {!comment.deleted && Number(comment.author?.id) === currentUserId ? (
                                                             <button
                                                                 type="button"
-                                                                className="incident-btn-ghost"
+                                                                className="incident-btn-ghost incident-btn-comment-delete"
                                                                 onClick={() => handleDeleteComment(comment.id)}
                                                                 disabled={busyAction === `delete-comment-${comment.id}`}
                                                             >

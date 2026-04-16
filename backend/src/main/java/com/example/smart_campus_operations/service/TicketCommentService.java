@@ -65,10 +65,10 @@ public class TicketCommentService {
         validateTicketMatch(ticketId, comment);
 
         User currentUser = currentUserService.getCurrentUser();
-        boolean isTicketCreator = comment.getTicket().getCreatedBy().getUserId().equals(currentUser.getUserId());
+        boolean isCommentAuthor = comment.getAuthor().getUserId().equals(currentUser.getUserId());
 
-        if (!isTicketCreator) {
-            throw new ForbiddenOperationException("Only the ticket creator can delete comments");
+        if (!isCommentAuthor) {
+            throw new ForbiddenOperationException("Only the comment author can delete this comment");
         }
 
         comment.setDeleted(true);
