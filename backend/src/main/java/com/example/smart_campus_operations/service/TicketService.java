@@ -23,8 +23,8 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -66,9 +66,14 @@ public class TicketService {
         IncidentTicket saved = incidentTicketRepository.save(ticket);
         createHistory(saved, null, TicketStatus.OPEN, currentUser, "Ticket created");
 
-        notificationService.create(currentUser, NotificationType.TICKET_CREATED,
-                "Ticket created", "Your ticket " + saved.getTicketCode() + " was created successfully.",
-                "TICKET", saved.getId());
+        notificationService.create(
+                currentUser,
+                NotificationType.TICKET_CREATED,
+                "Ticket created",
+                "Your ticket " + saved.getTicketCode() + " was created successfully.",
+                "TICKET",
+                saved.getId()
+        );
 
         return mapTicketResponse(saved);
     }
@@ -76,8 +81,11 @@ public class TicketService {
     @Transactional(readOnly = true)
     public Page<TicketSummaryResponse> getMyTickets(Pageable pageable) {
         User currentUser = currentUserService.getCurrentUser();
-        Specification<IncidentTicket> specification = (root, query, cb) -> cb.equal(root.get("createdBy").get("userId"), currentUser.getUserId());
-        return incidentTicketRepository.findAll(specification, pageable).map(this::mapTicketSummary);
+        Specification<IncidentTicket> specification =
+                (root, query, cb) -> cb.equal(root.get("createdBy").get("userId"), currentUser.getUserId());
+
+        return incidentTicketRepository.findAll(specification, pageable)
+                .map(this::mapTicketSummary);
     }
 
     @Transactional(readOnly = true)
@@ -87,11 +95,14 @@ public class TicketService {
             TicketCategory category,
             Long resourceId,
             Long assignedTechnicianId,
-            Pageable pageable) {
-
+            Pageable pageable
+    ) {
         User currentUser = currentUserService.getCurrentUser();
-        Specification<IncidentTicket> specification = buildSpecification(status, priority, category, resourceId, assignedTechnicianId, currentUser);
-        return incidentTicketRepository.findAll(specification, pageable).map(this::mapTicketSummary);
+        Specification<IncidentTicket> specification =
+                buildSpecification(status, priority, category, resourceId, assignedTechnicianId, currentUser);
+
+        return incidentTicketRepository.findAll(specification, pageable)
+                .map(this::mapTicketSummary);
     }
 
     @Transactional(readOnly = true)
@@ -160,9 +171,14 @@ public class TicketService {
         ticket.setAssignedTechnician(technician);
         incidentTicketRepository.save(ticket);
 
-        notificationService.create(technician, NotificationType.TICKET_ASSIGNED,
-                "Ticket assigned", "You have been assigned to ticket " + ticket.getTicketCode() + ".",
-                "TICKET", ticket.getId());
+        notificationService.create(
+                technician,
+                NotificationType.TICKET_ASSIGNED,
+                "Ticket assigned",
+                "You have been assigned to ticket " + ticket.getTicketCode() + ".",
+                "TICKET",
+                ticket.getId()
+        );
 
         return mapTicketResponse(ticket);
     }
@@ -201,10 +217,14 @@ public class TicketService {
         String note = buildStatusHistoryNote(request);
         createHistory(saved, oldStatus, newStatus, currentUser, note);
 
-        notificationService.create(saved.getCreatedBy(), NotificationType.TICKET_STATUS_CHANGED,
+        notificationService.create(
+                saved.getCreatedBy(),
+                NotificationType.TICKET_STATUS_CHANGED,
                 "Ticket status updated",
                 "Ticket " + saved.getTicketCode() + " changed to " + newStatus + ".",
-                "TICKET", saved.getId());
+                "TICKET",
+                saved.getId()
+        );
 
         return mapTicketResponse(saved);
     }
@@ -222,7 +242,7 @@ public class TicketService {
             throw new ForbiddenOperationException("Only admin can view assignable users");
         }
 
-        return userRepository.findByRoleInOrderByUsernameAsc(EnumSet.of(UserRole.TECHNICIAN))
+        return userRepository.findByRoleInOrderByUsernameAsc(Set.of(UserRole.TECHNICIAN))
                 .stream()
                 .map(this::mapUserSummary)
                 .toList();
@@ -250,7 +270,9 @@ public class TicketService {
     }
 
     private void validateCreatorRole(User currentUser) {
-        if (currentUser.getRole() != UserRole.STUDENT && currentUser.getRole() != UserRole.STAFF && currentUser.getRole() != UserRole.ADMIN) {
+        if (currentUser.getRole() != UserRole.STUDENT
+                && currentUser.getRole() != UserRole.STAFF
+                && currentUser.getRole() != UserRole.ADMIN) {
             throw new ForbiddenOperationException("Only student, staff, or admin can create tickets");
         }
     }
@@ -267,8 +289,8 @@ public class TicketService {
             TicketCategory category,
             Long resourceId,
             Long assignedTechnicianId,
-            User currentUser) {
-
+            User currentUser
+    ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -377,6 +399,7 @@ public class TicketService {
                 .changedBy(changedBy)
                 .note(note)
                 .build();
+
         statusHistoryRepository.save(history);
     }
 
@@ -394,6 +417,7 @@ public class TicketService {
         long next = incidentTicketRepository.findTopByOrderByIdDesc()
                 .map(ticket -> ticket.getId() + 1)
                 .orElse(1L);
+
         return String.format("TIC-%06d", next);
     }
 
@@ -482,6 +506,7 @@ public class TicketService {
         if (user == null) {
             return null;
         }
+
         return UserSummaryResponse.builder()
                 .id(Long.valueOf(user.getUserId()))
                 .fullName(user.getUsername())
@@ -494,6 +519,7 @@ public class TicketService {
         if (resource == null) {
             return null;
         }
+
         return ResourceSummaryResponse.builder()
                 .id(Long.valueOf(resource.getResourceId()))
                 .name(resource.getResourceName())
