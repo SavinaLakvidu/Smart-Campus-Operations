@@ -7,27 +7,25 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    // Already existing
     Optional<User> findByEmailIgnoreCase(String email);
 
-    // 🔥 NEW — check if email exists
     boolean existsByEmailIgnoreCase(String email);
 
-    // 🔥 NEW — filter by role
     List<User> findByRole(UserRole role);
 
-    // 🔥 NEW — search by username OR email
     List<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
             String username, String email
     );
 
-    // 🔥 NEW — search + filter (role + keyword)
     List<User> findByRoleAndUsernameContainingIgnoreCaseOrRoleAndEmailContainingIgnoreCase(
             UserRole role1, String username,
             UserRole role2, String email
     );
+
+    List<User> findByRoleInOrderByUsernameAsc(Set<UserRole> roles);
 }

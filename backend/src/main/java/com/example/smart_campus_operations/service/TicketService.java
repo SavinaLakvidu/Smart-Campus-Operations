@@ -2,6 +2,7 @@ package com.example.smart_campus_operations.service;
 
 import com.example.smart_campus_operations.dto.request.AssignTechnicianRequest;
 import com.example.smart_campus_operations.dto.request.CreateTicketRequest;
+import com.example.smart_campus_operations.dto.request.UpdateTicketRequest;
 import com.example.smart_campus_operations.dto.request.UpdateTicketStatusRequest;
 import com.example.smart_campus_operations.dto.response.*;
 import com.example.smart_campus_operations.entity.*;
@@ -22,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 @Service
@@ -101,6 +103,42 @@ public class TicketService {
     }
 
     @Transactional
+    public TicketResponse updateTicket(Long ticketId, UpdateTicketRequest request) {
+        IncidentTicket ticket = getTicketEntity(ticketId);
+        User currentUser = currentUserService.getCurrentUser();
+
+        validateTicketOwnerAndOpen(ticket, currentUser);
+        validateLocationOrResource(request.getResourceId(), request.getLocationText());
+
+        Resource resource = null;
+        if (request.getResourceId() != null) {
+            resource = resourceRepository.findById(request.getResourceId().intValue())
+                    .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + request.getResourceId()));
+        }
+
+        ticket.setResource(resource);
+        ticket.setLocationText(StringUtils.hasText(request.getLocationText()) ? request.getLocationText().trim() : null);
+        ticket.setCategory(request.getCategory());
+        ticket.setDescription(request.getDescription().trim());
+        ticket.setPriority(request.getPriority());
+        ticket.setPreferredContactName(trimToNull(request.getPreferredContactName()));
+        ticket.setPreferredContactEmail(trimToNull(request.getPreferredContactEmail()));
+        ticket.setPreferredContactPhone(trimToNull(request.getPreferredContactPhone()));
+
+        IncidentTicket saved = incidentTicketRepository.save(ticket);
+        return mapTicketResponse(saved);
+    }
+
+    @Transactional
+    public void deleteTicket(Long ticketId) {
+        IncidentTicket ticket = getTicketEntity(ticketId);
+        User currentUser = currentUserService.getCurrentUser();
+
+        validateTicketOwnerAndOpen(ticket, currentUser);
+        incidentTicketRepository.delete(ticket);
+    }
+
+    @Transactional
     public TicketResponse assignTechnician(Long ticketId, AssignTechnicianRequest request) {
         User currentUser = currentUserService.getCurrentUser();
         if (currentUser.getRole() != UserRole.ADMIN) {
@@ -108,6 +146,10 @@ public class TicketService {
         }
 
         IncidentTicket ticket = getTicketEntity(ticketId);
+        if (ticket.getStatus() == TicketStatus.RESOLVED || ticket.getStatus() == TicketStatus.REJECTED) {
+            throw new InvalidTicketStateException("Cannot assign technician for RESOLVED or REJECTED tickets");
+        }
+
         User technician = userRepository.findById(request.getTechnicianId().intValue())
                 .orElseThrow(() -> new ResourceNotFoundException("Technician not found with id: " + request.getTechnicianId()));
 
@@ -129,6 +171,11 @@ public class TicketService {
     public TicketResponse updateStatus(Long ticketId, UpdateTicketStatusRequest request) {
         IncidentTicket ticket = getTicketEntity(ticketId);
         User currentUser = currentUserService.getCurrentUser();
+
+        if (currentUser.getRole() == UserRole.ADMIN
+                && (ticket.getStatus() == TicketStatus.RESOLVED || ticket.getStatus() == TicketStatus.REJECTED)) {
+            throw new InvalidTicketStateException("Admin cannot update status for RESOLVED or REJECTED tickets");
+        }
 
         validateStatusUpdater(ticket, currentUser);
         validateStatusTransition(ticket, request, currentUser);
@@ -168,6 +215,19 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
     }
 
+    @Transactional(readOnly = true)
+    public List<UserSummaryResponse> getAssignableUsers() {
+        User currentUser = currentUserService.getCurrentUser();
+        if (currentUser.getRole() != UserRole.ADMIN) {
+            throw new ForbiddenOperationException("Only admin can view assignable users");
+        }
+
+        return userRepository.findByRoleInOrderByUsernameAsc(EnumSet.of(UserRole.TECHNICIAN))
+                .stream()
+                .map(this::mapUserSummary)
+                .toList();
+    }
+
     public void validateTicketAccess(IncidentTicket ticket, User currentUser) {
         boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
         boolean isOwner = ticket.getCreatedBy().getUserId().equals(currentUser.getUserId());
@@ -176,6 +236,16 @@ public class TicketService {
 
         if (!isAdmin && !isOwner && !isAssignedTechnician) {
             throw new ForbiddenOperationException("You do not have access to this ticket");
+        }
+    }
+
+    private void validateTicketOwnerAndOpen(IncidentTicket ticket, User currentUser) {
+        boolean isOwner = ticket.getCreatedBy().getUserId().equals(currentUser.getUserId());
+        if (!isOwner) {
+            throw new ForbiddenOperationException("Only the ticket creator can edit or delete this ticket");
+        }
+        if (ticket.getStatus() != TicketStatus.OPEN) {
+            throw new InvalidTicketStateException("Ticket can only be edited or deleted when status is OPEN");
         }
     }
 
@@ -242,6 +312,9 @@ public class TicketService {
     private void validateStatusTransition(IncidentTicket ticket, UpdateTicketStatusRequest request, User currentUser) {
         TicketStatus currentStatus = ticket.getStatus();
         TicketStatus newStatus = request.getStatus();
+        boolean isAssignedTechnician = currentUser.getRole() == UserRole.TECHNICIAN
+                && ticket.getAssignedTechnician() != null
+                && ticket.getAssignedTechnician().getUserId().equals(currentUser.getUserId());
 
         if (currentStatus == newStatus) {
             throw new InvalidTicketStateException("Ticket is already in status " + newStatus);
@@ -250,6 +323,12 @@ public class TicketService {
         switch (currentStatus) {
             case OPEN -> {
                 if (newStatus == TicketStatus.IN_PROGRESS) {
+                    if (ticket.getAssignedTechnician() == null) {
+                        throw new InvalidTicketStateException("Technician must be assigned before moving ticket to IN_PROGRESS");
+                    }
+                    if (!isAssignedTechnician) {
+                        throw new ForbiddenOperationException("Only assigned technician can move ticket to IN_PROGRESS");
+                    }
                     return;
                 }
                 if (newStatus == TicketStatus.REJECTED) {
@@ -259,6 +338,9 @@ public class TicketService {
             }
             case IN_PROGRESS -> {
                 if (newStatus == TicketStatus.RESOLVED) {
+                    if (!isAssignedTechnician) {
+                        throw new ForbiddenOperationException("Only assigned technician can resolve a ticket");
+                    }
                     if (!StringUtils.hasText(request.getResolutionNotes())) {
                         throw new InvalidTicketStateException("Resolution notes are required when resolving a ticket");
                     }
@@ -270,12 +352,6 @@ public class TicketService {
                 }
             }
             case RESOLVED -> {
-                if (newStatus == TicketStatus.CLOSED) {
-                    if (currentUser.getRole() != UserRole.ADMIN) {
-                        throw new ForbiddenOperationException("Only admin can close a resolved ticket");
-                    }
-                    return;
-                }
             }
             default -> {
             }
@@ -426,4 +502,3 @@ public class TicketService {
                 .build();
     }
 }
-

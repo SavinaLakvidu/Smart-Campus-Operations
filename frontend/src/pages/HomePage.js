@@ -40,9 +40,9 @@ function HomePage() {
             icon: '🔧',
             title: 'Maintenance & Incident Ticketing',
             description: 'Report faults, damaged equipment, or any incidents on campus. Attach photos as evidence, set priority levels, and track the resolution progress in real time.',
-            link: '/incidents',
-            linkText: isTechnician || isAdmin ? 'Manage Incidents' : 'Report Incident',
-            available: false
+            link: isTechnician ? '/technician/tickets' : '/incidents/new',
+            linkText: isTechnician ? 'Ticket Updates' : 'Report Incident',
+            available: isLoggedIn
         },
         {
             icon: '🔔',
@@ -188,6 +188,25 @@ function HomePage() {
                                         >
                                             View My Bookings
                                         </Link>
+
+                                        {(isStudent || isStaff || isAdmin) && (
+                                            <Link to="/incidents/new" style={{
+                                                backgroundColor: 'transparent',
+                                                color: '#ffffff',
+                                                padding: '12px 28px',
+                                                fontWeight: '600',
+                                                fontSize: '0.95rem',
+                                                textDecoration: 'none',
+                                                borderRadius: '3px',
+                                                border: '1px solid #555555',
+                                                transition: 'border-color 0.2s'
+                                            }}
+                                                onMouseEnter={e => e.currentTarget.style.borderColor = '#ffffff'}
+                                                onMouseLeave={e => e.currentTarget.style.borderColor = '#555555'}
+                                            >
+                                                Report Incident
+                                            </Link>
+                                        )}
 
                                         {(isTechnician || isAdmin) && (
                                             <Link to="/technician/tickets" style={{

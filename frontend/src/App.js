@@ -13,6 +13,12 @@ import Navbar from './components/navbar.js';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import CreateIncidentPage from './pages/CreateIncidentPage';
+import EditIncidentPage from './pages/EditIncidentPage';
+import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
+import IncidentTicketDetailsPage from './pages/IncidentTicketDetailsPage';
+import AdminTicketManagementPage from './pages/AdminTicketManagementPage';
+import TechnicianTicketUpdatesPage from './pages/TechnicianTicketUpdatesPage';
 
 function AppContent() {
   const location = useLocation();
@@ -68,6 +74,60 @@ function AppContent() {
               element={
                 <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
                   <NotificationsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF"]}>
+                  <IncidentMyTicketsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents/new"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF"]}>
+                  <CreateIncidentPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents/:ticketId/edit"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "ADMIN"]}>
+                  <EditIncidentPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/technician/tickets"
+              element={
+                <ProtectedRoute allowedRoles={["TECHNICIAN"]}>
+                  <TechnicianTicketUpdatesPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/tickets"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminTicketManagementPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/incidents/:ticketId"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
+                  <IncidentTicketDetailsPage />
                 </ProtectedRoute>
               }
             />

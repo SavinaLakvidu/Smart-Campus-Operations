@@ -85,6 +85,10 @@ public class TicketAttachmentService {
         validateTicketMatch(ticketId, attachment);
 
         User currentUser = currentUserService.getCurrentUser();
+        if (currentUser.getRole() == UserRole.TECHNICIAN) {
+            throw new ForbiddenOperationException("Technician cannot delete attachments");
+        }
+
         boolean isUploader = attachment.getUploadedBy().getUserId().equals(currentUser.getUserId());
         boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
 
