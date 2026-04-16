@@ -299,6 +299,58 @@
     color: #0f172a;
 }
 
+.incident-comments-card {
+    background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+    border: 1px solid #b9d5ff;
+}
+
+.incident-comments-header {
+    color: #1e3a8a;
+    font-weight: 800;
+}
+
+.incident-comment-item {
+    border-color: #bfd2ef;
+    background: linear-gradient(180deg, #ffffff 0%, #f3f8ff 100%);
+}
+
+.incident-comment-text {
+    white-space: pre-wrap;
+    margin-top: 8px;
+    color: #0f172a;
+    line-height: 1.45;
+}
+
+.incident-comment-meta {
+    margin-top: 6px;
+    color: #475569;
+    font-size: 0.86rem;
+}
+
+.incident-btn-comment-edit {
+    background: #e0f2fe;
+    border: 1px solid #7dd3fc;
+    color: #0c4a6e;
+}
+
+.incident-btn-comment-save {
+    background: linear-gradient(135deg, #15803d, #22c55e);
+    color: #ffffff;
+    border: 1px solid #166534;
+}
+
+.incident-btn-comment-cancel {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+}
+
+.incident-btn-comment-delete {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+}
+
 .incident-timeline {
     margin-top: 16px;
     border-left: 3px solid #2dd4bf;
