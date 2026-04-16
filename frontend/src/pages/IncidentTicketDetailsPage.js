@@ -264,8 +264,8 @@ function IncidentTicketDetailsPage() {
                                 <div style={{ whiteSpace: 'pre-wrap' }}>{detailText(ticket.description)}</div>
                             </div>
 
-                            <div className="incident-card" style={{ marginTop: '12px', padding: '16px' }}>
-                                <h3 style={{ fontSize: '1.05rem', marginBottom: '12px' }}>Attachments</h3>
+                            <div className="incident-card incident-attachments-card" style={{ marginTop: '12px', padding: '16px' }}>
+                                <h3 className="incident-attachments-header" style={{ fontSize: '1.05rem', marginBottom: '12px' }}>Attachments</h3>
                                 <div style={{ marginTop: '14px' }}>
                                     {(ticket.attachments || []).length === 0 ? (
                                         <div className="incident-meta">No attachments uploaded yet.</div>
@@ -283,7 +283,7 @@ function IncidentTicketDetailsPage() {
                                                     <div className="incident-actions" style={{ marginTop: '10px' }}>
                                                         <button
                                                             type="button"
-                                                            className="incident-btn-ghost"
+                                                            className="incident-btn-ghost incident-btn-attachment-download"
                                                             onClick={() => handleDownloadAttachment(attachment)}
                                                         >
                                                             Download
@@ -291,7 +291,7 @@ function IncidentTicketDetailsPage() {
                                                         {!isTechnician && (
                                                             <button
                                                                 type="button"
-                                                                className="incident-btn-ghost"
+                                                                className="incident-btn-ghost incident-btn-attachment-delete"
                                                                 onClick={() => handleDeleteAttachment(attachment.id)}
                                                                 disabled={busyAction === `delete-attachment-${attachment.id}`}
                                                             >
