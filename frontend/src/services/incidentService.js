@@ -122,6 +122,15 @@ export async function addTicketComment(ticketId, message) {
     }
 }
 
+export async function updateTicketComment(ticketId, commentId, message) {
+    try {
+        const response = await api.patch(`/api/v1/tickets/${ticketId}/comments/${commentId}`, { message });
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
 export async function deleteTicketComment(ticketId, commentId) {
     try {
         await api.delete(`/api/v1/tickets/${ticketId}/comments/${commentId}`);

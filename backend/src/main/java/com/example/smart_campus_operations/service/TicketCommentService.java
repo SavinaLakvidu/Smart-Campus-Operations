@@ -6,7 +6,6 @@ import com.example.smart_campus_operations.dto.response.TicketCommentResponse;
 import com.example.smart_campus_operations.entity.IncidentTicket;
 import com.example.smart_campus_operations.entity.TicketComment;
 import com.example.smart_campus_operations.entity.User;
-import com.example.smart_campus_operations.entity.enums.NotificationType;
 import com.example.smart_campus_operations.entity.enums.UserRole;
 import com.example.smart_campus_operations.exception.ForbiddenOperationException;
 import com.example.smart_campus_operations.exception.ResourceNotFoundException;
@@ -22,7 +21,6 @@ public class TicketCommentService {
     private final TicketCommentRepository ticketCommentRepository;
     private final TicketService ticketService;
     private final CurrentUserService currentUserService;
-    private final NotificationService notificationService;
 
     @Transactional
     public TicketCommentResponse addComment(Long ticketId, AddTicketCommentRequest request) {
@@ -39,13 +37,6 @@ public class TicketCommentService {
                 .build();
 
         TicketComment saved = ticketCommentRepository.save(comment);
-
-        if (!ticket.getCreatedBy().getUserId().equals(currentUser.getUserId())) {
-            notificationService.create(ticket.getCreatedBy(), NotificationType.NEW_COMMENT,
-                    "New comment on ticket",
-                    "A new comment was added to ticket " + ticket.getTicketCode() + ".",
-                    "TICKET", ticket.getId());
-        }
 
         return map(saved);
     }
@@ -74,11 +65,10 @@ public class TicketCommentService {
         validateTicketMatch(ticketId, comment);
 
         User currentUser = currentUserService.getCurrentUser();
-        boolean isAuthor = comment.getAuthor().getUserId().equals(currentUser.getUserId());
-        boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
+        boolean isTicketCreator = comment.getTicket().getCreatedBy().getUserId().equals(currentUser.getUserId());
 
-        if (!isAuthor && !isAdmin) {
-            throw new ForbiddenOperationException("Only the comment author or admin can delete this comment");
+        if (!isTicketCreator) {
+            throw new ForbiddenOperationException("Only the ticket creator can delete comments");
         }
 
         comment.setDeleted(true);

@@ -8,7 +8,8 @@ import {
     deleteTicketAttachment,
     deleteTicketComment,
     downloadTicketAttachment,
-    getTicketById
+    getTicketById,
+    updateTicketComment
 } from '../services/incidentService';
 import './incident.css';
 
@@ -35,6 +36,8 @@ function IncidentTicketDetailsPage() {
     const [ticket, setTicket] = useState(null);
     const [commentText, setCommentText] = useState('');
     const [busyAction, setBusyAction] = useState('');
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editingCommentText, setEditingCommentText] = useState('');
 
     useEffect(() => {
         let mounted = true;
@@ -99,6 +102,35 @@ function IncidentTicketDetailsPage() {
         }
     }
 
+    function startEditComment(comment) {
+        setEditingCommentId(comment.id);
+        setEditingCommentText(comment.message || '');
+    }
+
+    function cancelEditComment() {
+        setEditingCommentId(null);
+        setEditingCommentText('');
+    }
+
+    async function handleSaveCommentEdit(commentId) {
+        if (!editingCommentText.trim()) {
+            toast.error('Comment message is required');
+            return;
+        }
+
+        setBusyAction(`edit-comment-${commentId}`);
+        try {
+            await updateTicketComment(ticketId, commentId, editingCommentText.trim());
+            await refreshTicket();
+            cancelEditComment();
+            toast.success('Comment updated');
+        } catch (error) {
+            toast.error(error.message);
+        } finally {
+            setBusyAction('');
+        }
+    }
+
     async function handleDeleteAttachment(attachmentId) {
         setBusyAction(`delete-attachment-${attachmentId}`);
         try {
@@ -149,7 +181,8 @@ function IncidentTicketDetailsPage() {
     const isTechnician = user?.role === 'TECHNICIAN';
     const backLink = isTechnician ? '/technician/tickets' : '/incidents';
     const backLabel = isTechnician ? 'Back To Ticket Updates' : 'Back To My Tickets';
-    const isOwner = ticket && Number(ticket.createdBy?.id) === Number(user?.userId);
+    const currentUserId = Number(user?.userId ?? user?.id);
+    const isOwner = ticket && Number(ticket.createdBy?.id) === currentUserId;
     const canEditOrDelete = isOwner && ticket?.status === 'OPEN';
 
     return (
@@ -306,19 +339,64 @@ function IncidentTicketDetailsPage() {
                                                         <strong>{comment.author?.fullName || '-'}</strong>
                                                         <span className="incident-meta">{formatDate(comment.updatedAt)}</span>
                                                     </div>
-                                                    <div style={{ whiteSpace: 'pre-wrap', marginTop: '8px' }}>{detailText(comment.message)}</div>
+                                                    {editingCommentId === comment.id ? (
+                                                        <div style={{ marginTop: '8px' }}>
+                                                            <textarea
+                                                                className="incident-textarea"
+                                                                value={editingCommentText}
+                                                                onChange={(event) => setEditingCommentText(event.target.value)}
+                                                                maxLength={1000}
+                                                                disabled={busyAction === `edit-comment-${comment.id}`}
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div style={{ whiteSpace: 'pre-wrap', marginTop: '8px' }}>{detailText(comment.message)}</div>
+                                                    )}
                                                     <div className="incident-meta" style={{ marginTop: '6px' }}>
                                                         {comment.edited ? 'Edited' : 'Original'} • {comment.deleted ? 'Deleted' : 'Visible'}
                                                     </div>
                                                     <div className="incident-actions" style={{ marginTop: '10px' }}>
-                                                        <button
-                                                            type="button"
-                                                            className="incident-btn-ghost"
-                                                            onClick={() => handleDeleteComment(comment.id)}
-                                                            disabled={busyAction === `delete-comment-${comment.id}`}
-                                                        >
-                                                            {busyAction === `delete-comment-${comment.id}` ? 'Deleting...' : 'Delete Comment'}
-                                                        </button>
+                                                        {!comment.deleted && Number(comment.author?.id) === currentUserId && editingCommentId !== comment.id ? (
+                                                            <button
+                                                                type="button"
+                                                                className="incident-btn-ghost"
+                                                                onClick={() => startEditComment(comment)}
+                                                            >
+                                                                Edit Comment
+                                                            </button>
+                                                        ) : null}
+
+                                                        {!comment.deleted && editingCommentId === comment.id ? (
+                                                            <>
+                                                                <button
+                                                                    type="button"
+                                                                    className="incident-btn-primary"
+                                                                    onClick={() => handleSaveCommentEdit(comment.id)}
+                                                                    disabled={busyAction === `edit-comment-${comment.id}`}
+                                                                >
+                                                                    {busyAction === `edit-comment-${comment.id}` ? 'Saving...' : 'Save'}
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="incident-btn-ghost"
+                                                                    onClick={cancelEditComment}
+                                                                    disabled={busyAction === `edit-comment-${comment.id}`}
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                            </>
+                                                        ) : null}
+
+                                                        {isOwner ? (
+                                                            <button
+                                                                type="button"
+                                                                className="incident-btn-ghost"
+                                                                onClick={() => handleDeleteComment(comment.id)}
+                                                                disabled={busyAction === `delete-comment-${comment.id}`}
+                                                            >
+                                                                {busyAction === `delete-comment-${comment.id}` ? 'Deleting...' : 'Delete Comment'}
+                                                            </button>
+                                                        ) : null}
                                                     </div>
                                                 </div>
                                             ))}
