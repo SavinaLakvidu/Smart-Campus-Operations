@@ -180,3 +180,4 @@ export async function downloadTicketAttachment(ticketId, attachmentId) {
         handleError(error);
     }
 }
+
