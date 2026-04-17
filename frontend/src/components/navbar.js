@@ -179,7 +179,6 @@ function Navbar() {
                 <div className="d-flex align-items-center gap-3">
                     {isLoggedIn ? (
                         <>
-                            {/* Bell Icon with Unread Count */}
                             <Link to="/notifications" style={{ position: 'relative', textDecoration: 'none' }}>
                                 <svg 
                                     width="22" 
