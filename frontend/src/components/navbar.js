@@ -110,13 +110,13 @@ function Navbar() {
                 position: 'sticky',
                 top: 0,
                 zIndex: 1000,
-                backgroundColor: '#ffffff',
+                backgroundColor: '#f9f9f9',
                 padding: '16px 20px 0'
             }}
         >
             <nav
                 style={{
-                    maxWidth: '1280px',
+                    maxWidth: '1480px',
                     margin: '0 auto',
                     background: 'linear-gradient(135deg, #000000, #434141)',
                     borderRadius: '999px',
@@ -247,17 +247,17 @@ function Navbar() {
                                     >
                                         <li>
                                             <Link className="zentrix-dropdown-item" to="/admin/tickets" style={menuLinkStyle}>
-                                                🎫 Ticket Management
+                                                Ticket Management
                                             </Link>
                                         </li>
                                         <li>
                                             <Link className="zentrix-dropdown-item" to="/admin/users" style={menuLinkStyle}>
-                                                👥 User Management
+                                                User Management
                                             </Link>
                                         </li>
                                         <li>
                                             <Link className="zentrix-dropdown-item" to="/admin/bookings" style={menuLinkStyle}>
-                                                📅 Booking Approvals
+                                                Booking Approvals
                                             </Link>
                                         </li>
                                     </ul>
