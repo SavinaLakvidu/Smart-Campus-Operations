@@ -38,7 +38,7 @@ function AboutPage() {
         };
         
         animateNumbers();
-    }, []);
+    }, [stats]);
 
     const team = [
         {
