@@ -61,7 +61,7 @@ const LoginPage = () => {
     <div style={styles.page}>
       <div style={styles.card}>
         <div style={styles.left}>
-          <h1 style={styles.title}>Smart Campus</h1>
+          <h1 style={styles.title}>Zentrix Campus</h1>
           <p style={styles.subtitle}>
             Manage campus resources, bookings, and notifications easily.
           </p>
