@@ -4,5 +4,6 @@ public enum NotificationType {
     TICKET_CREATED,
     TICKET_ASSIGNED,
     TICKET_STATUS_CHANGED,
-    NEW_COMMENT
+    NEW_COMMENT,
+    ACCOUNT_CREATED
 }

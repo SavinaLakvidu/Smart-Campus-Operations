@@ -41,12 +41,13 @@ public class TicketController {
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('STUDENT','STAFF','ADMIN')")
     @Operation(summary = "View my tickets")
-    public ResponseEntity<Page<TicketSummaryResponse>> getMyTickets(@PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
+    public ResponseEntity<Page<TicketSummaryResponse>> getMyTickets(
+            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
         return ResponseEntity.ok(ticketService.getMyTickets(pageable));
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('TECHNICIAN','STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('TECHNICIAN','ADMIN')")
     @Operation(summary = "View all tickets with filters")
     public ResponseEntity<Page<TicketSummaryResponse>> getAllTickets(
             @RequestParam(required = false) TicketStatus status,
@@ -55,12 +56,14 @@ public class TicketController {
             @RequestParam(required = false) Long resourceId,
             @RequestParam(required = false) Long assignedTechnicianId,
             @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
-        return ResponseEntity.ok(ticketService.getAllTickets(status, priority, category, resourceId, assignedTechnicianId, pageable));
+        return ResponseEntity.ok(
+                ticketService.getAllTickets(status, priority, category, resourceId, assignedTechnicianId, pageable)
+        );
     }
 
     @GetMapping("/assignees")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Get users that can be assigned to tickets")
+    @Operation(summary = "Get assignable technicians")
     public ResponseEntity<List<UserSummaryResponse>> getAssignableUsers() {
         return ResponseEntity.ok(ticketService.getAssignableUsers());
     }
@@ -75,8 +78,9 @@ public class TicketController {
     @PutMapping("/{ticketId}")
     @PreAuthorize("hasAnyRole('STUDENT','STAFF','ADMIN')")
     @Operation(summary = "Update ticket details (creator only, OPEN status only)")
-    public ResponseEntity<TicketResponse> updateTicket(@PathVariable Long ticketId,
-                                                       @Valid @RequestBody UpdateTicketRequest request) {
+    public ResponseEntity<TicketResponse> updateTicket(
+            @PathVariable Long ticketId,
+            @Valid @RequestBody UpdateTicketRequest request) {
         return ResponseEntity.ok(ticketService.updateTicket(ticketId, request));
     }
 
@@ -91,16 +95,18 @@ public class TicketController {
     @PatchMapping("/{ticketId}/assign")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Assign technician to a ticket")
-    public ResponseEntity<TicketResponse> assignTechnician(@PathVariable Long ticketId,
-                                                           @Valid @RequestBody AssignTechnicianRequest request) {
+    public ResponseEntity<TicketResponse> assignTechnician(
+            @PathVariable Long ticketId,
+            @Valid @RequestBody AssignTechnicianRequest request) {
         return ResponseEntity.ok(ticketService.assignTechnician(ticketId, request));
     }
 
     @PatchMapping("/{ticketId}/status")
     @PreAuthorize("hasAnyRole('TECHNICIAN','ADMIN')")
     @Operation(summary = "Update ticket status")
-    public ResponseEntity<TicketResponse> updateStatus(@PathVariable Long ticketId,
-                                                       @Valid @RequestBody UpdateTicketStatusRequest request) {
+    public ResponseEntity<TicketResponse> updateStatus(
+            @PathVariable Long ticketId,
+            @Valid @RequestBody UpdateTicketStatusRequest request) {
         return ResponseEntity.ok(ticketService.updateStatus(ticketId, request));
     }
 }

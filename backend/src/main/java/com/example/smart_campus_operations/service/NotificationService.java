@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -32,5 +34,39 @@ public class NotificationService {
 
         notificationRepository.save(notification);
     }
-}
 
+    @Transactional(readOnly = true)
+    public List<Notification> getAllForUser(User user) {
+        return notificationRepository.findByRecipientOrderByCreatedAtDesc(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Notification> getUnreadForUser(User user) {
+        return notificationRepository.findByRecipientAndReadFlagFalseOrderByCreatedAtDesc(user);
+    }
+
+    @Transactional(readOnly = true)
+    public long getUnreadCount(User user) {
+        return notificationRepository.countByRecipientAndReadFlagFalse(user);
+    }
+
+    @Transactional
+    public void markAsRead(Long notificationId, User user) {
+        Notification notification = notificationRepository.findByIdAndRecipient(notificationId, user)
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
+
+        notification.setReadFlag(true);
+        notificationRepository.save(notification);
+    }
+
+    @Transactional
+    public void markAllAsRead(User user) {
+        List<Notification> unreadNotifications = notificationRepository.findByRecipientAndReadFlagFalseOrderByCreatedAtDesc(user);
+
+        for (Notification notification : unreadNotifications) {
+            notification.setReadFlag(true);
+        }
+
+        notificationRepository.saveAll(unreadNotifications);
+    }
+}

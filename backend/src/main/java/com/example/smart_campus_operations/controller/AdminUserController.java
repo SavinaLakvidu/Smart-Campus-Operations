@@ -4,6 +4,8 @@ import com.example.smart_campus_operations.dto.request.CreateUserRequest;
 import com.example.smart_campus_operations.dto.request.UpdateUserRequest;
 import com.example.smart_campus_operations.dto.response.UserResponse;
 import com.example.smart_campus_operations.entity.User;
+import com.example.smart_campus_operations.entity.enums.NotificationType;
+import com.example.smart_campus_operations.service.NotificationService;
 import com.example.smart_campus_operations.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +20,21 @@ import java.util.List;
 public class AdminUserController {
 
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
             User user = userService.createUser(request);
+
+            notificationService.create(
+                    user,
+                    NotificationType.ACCOUNT_CREATED,
+                    "Welcome to Smart Campus",
+                    "Your account has been created by admin.",
+                    "USER",
+                    user.getUserId().longValue()
+            );
 
             return ResponseEntity.ok(
                     new UserResponse(

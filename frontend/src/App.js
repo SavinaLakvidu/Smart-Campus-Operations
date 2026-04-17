@@ -7,6 +7,7 @@ import BookingListPage from './pages/BookingListPage.js';
 import CreateBookingPage from './pages/CreateBookingPage.js';
 import AdminBookingsPage from './pages/AdminBookingPage.js';
 import AdminUsersPage from './pages/AdminUsersPage.js';
+import NotificationsPage from './pages/NotificationsPage.js';
 import HomePage from './pages/HomePage';
 import Navbar from './components/navbar.js';
 import LoginPage from './pages/LoginPage';
@@ -69,6 +70,15 @@ function AppContent() {
             />
 
             <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
+                  <NotificationsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
               path="/incidents"
               element={
                 <ProtectedRoute allowedRoles={["STUDENT", "STAFF"]}>
@@ -107,7 +117,7 @@ function AppContent() {
             <Route
               path="/admin/tickets"
               element={
-                <ProtectedRoute adminOnly={true}>
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminTicketManagementPage />
                 </ProtectedRoute>
               }
