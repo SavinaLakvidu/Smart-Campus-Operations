@@ -38,7 +38,8 @@ function AboutPage() {
         };
         
         animateNumbers();
-    }, [stats]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const team = [
         {
