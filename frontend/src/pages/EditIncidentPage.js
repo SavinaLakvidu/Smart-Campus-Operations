@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { deleteTicket, getResources, getTicketById, updateTicket } from '../services/incidentService';
+import { deleteTicket, getResources, getTicketById, updateTicket, uploadTicketAttachments } from '../services/incidentService';
 import './incident.css';
 
 const categories = [
@@ -47,6 +47,7 @@ function EditIncidentPage() {
     const [deleting, setDeleting] = useState(false);
     const [form, setForm] = useState(initialForm);
     const [errors, setErrors] = useState({});
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     useEffect(() => {
         let mounted = true;
@@ -128,6 +129,15 @@ function EditIncidentPage() {
             nextErrors.preferredContactEmail = 'Use a valid email address';
         }
 
+        if (selectedFiles.length > 3) {
+            nextErrors.attachments = 'You can upload maximum 3 images';
+        }
+
+        const invalidFile = selectedFiles.find((file) => !['image/jpeg', 'image/png', 'image/webp', 'image/jpg'].includes(file.type));
+        if (invalidFile) {
+            nextErrors.attachments = 'Only JPG, JPEG, PNG, and WEBP images are allowed';
+        }
+
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;
     }
@@ -152,6 +162,15 @@ function EditIncidentPage() {
             };
 
             await updateTicket(ticketId, payload);
+
+            if (selectedFiles.length > 0) {
+                try {
+                    await uploadTicketAttachments(ticketId, selectedFiles);
+                } catch (uploadError) {
+                    toast.warning(`Ticket updated, but attachment upload failed: ${uploadError.message}`);
+                }
+            }
+
             toast.success('Ticket updated successfully.');
             navigate(`/incidents/${ticketId}`);
         } catch (error) {
@@ -264,6 +283,35 @@ function EditIncidentPage() {
                                 placeholder="Describe what happened, when it started, and any visible impact..."
                             />
                             {errors.description ? <div className="incident-error">{errors.description}</div> : null}
+                        </div>
+
+                        <div className="incident-grid-full">
+                            <label className="incident-label">Attachments (Optional)</label>
+                            <input
+                                className="incident-input"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,image/jpg"
+                                multiple
+                                onChange={(event) => {
+                                    const files = Array.from(event.target.files || []);
+                                    setSelectedFiles(files);
+                                    setErrors((prev) => ({ ...prev, attachments: '' }));
+                                }}
+                            />
+                            <div className="incident-helper-box" style={{ marginTop: '8px' }}>
+                                <div className="incident-helper-title">Attachment Guidelines</div>
+                                <ul className="incident-helper-list">
+                                    <li>Only image files are allowed: PNG, JPG, JPEG, WEBP</li>
+                                    <li>Maximum attachments per ticket: 3 files</li>
+                                    <li>Attachments are uploaded after saving ticket changes</li>
+                                </ul>
+                            </div>
+                            {selectedFiles.length > 0 ? (
+                                <div className="incident-meta" style={{ marginTop: '4px' }}>
+                                    {selectedFiles.length} file(s) selected
+                                </div>
+                            ) : null}
+                            {errors.attachments ? <div className="incident-error">{errors.attachments}</div> : null}
                         </div>
 
                         <div>
