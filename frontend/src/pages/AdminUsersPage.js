@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
 function AdminUsersPage() {
@@ -24,7 +24,7 @@ function AdminUsersPage() {
     provider: "LOCAL",
   });
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const params = {};
       if (keyword) params.keyword = keyword;
@@ -39,11 +39,11 @@ function AdminUsersPage() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [keyword, role]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleSearch = (e) => {
     e.preventDefault();

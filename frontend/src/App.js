@@ -19,6 +19,8 @@ import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
 import IncidentTicketDetailsPage from './pages/IncidentTicketDetailsPage';
 import AdminTicketManagementPage from './pages/AdminTicketManagementPage';
 import TechnicianTicketUpdatesPage from './pages/TechnicianTicketUpdatesPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 
 function AppContent() {
   const location = useLocation();
@@ -133,6 +135,8 @@ function AppContent() {
             />
 
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Routes>
         </div>
       </div>
