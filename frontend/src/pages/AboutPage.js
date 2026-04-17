@@ -16,7 +16,7 @@ function AboutPage() {
         { id: 'tickets', label: 'Issues Resolved', value: 2340, icon: '✅', suffix: '+' },
         { id: 'uptime', label: 'System Uptime', value: 99.9, icon: '⚡', suffix: '%' }
     ];
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         const animateNumbers = () => {
             stats.forEach(stat => {
@@ -38,7 +38,7 @@ function AboutPage() {
         };
         
         animateNumbers();
-    }, [stats]);
+    }, []);
 
     const team = [
         {
