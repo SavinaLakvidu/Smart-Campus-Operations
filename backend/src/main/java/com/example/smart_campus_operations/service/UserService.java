@@ -6,6 +6,7 @@ import com.example.smart_campus_operations.entity.User;
 import com.example.smart_campus_operations.entity.enums.UserProvider;
 import com.example.smart_campus_operations.entity.enums.UserRole;
 import com.example.smart_campus_operations.exception.ResourceNotFoundException;
+import com.example.smart_campus_operations.repository.NotificationRepository;
 import com.example.smart_campus_operations.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public User findOrCreateOauthUser(String email, String fullName) {
@@ -165,6 +167,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        notificationRepository.deleteByRecipient_UserId(id);
         userRepository.delete(user);
     }
 }
