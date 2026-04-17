@@ -327,6 +327,28 @@
     font-size: 0.86rem;
 }
 
+.incident-attachments-card {
+    background: linear-gradient(180deg, #f7fffb 0%, #ecfdf5 100%);
+    border: 1px solid #9fe6c1;
+}
+
+.incident-attachments-header {
+    color: #166534;
+    font-weight: 800;
+}
+
+.incident-btn-attachment-download {
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    color: #14532d;
+}
+
+.incident-btn-attachment-delete {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+}
+
 .incident-btn-comment-edit {
     background: #e0f2fe;
     border: 1px solid #7dd3fc;
