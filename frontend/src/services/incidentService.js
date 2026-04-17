@@ -181,14 +181,3 @@ export async function downloadTicketAttachment(ticketId, attachmentId) {
     }
 }
 
-export async function updateTicketComment(ticketId, commentId, message) {
-    try {
-        const response = await api.put(
-            `/api/v1/tickets/${ticketId}/comments/${commentId}`,
-            { message }
-        );
-        return response.data;
-    } catch (error) {
-        handleError(error);
-    }
-}
