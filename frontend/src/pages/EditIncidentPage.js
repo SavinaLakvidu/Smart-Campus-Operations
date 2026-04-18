@@ -17,6 +17,8 @@ const categories = [
 ];
 
 const priorities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+const emailRegex = /^[A-Za-z0-9][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+const phoneRegex = /^0\d{9}$/;
 
 const initialForm = {
     resourceId: '',
@@ -125,8 +127,12 @@ function EditIncidentPage() {
             nextErrors.locationText = 'Provide either resource or location text';
         }
 
-        if (form.preferredContactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.preferredContactEmail)) {
-            nextErrors.preferredContactEmail = 'Use a valid email address';
+        if (form.preferredContactEmail && !emailRegex.test(form.preferredContactEmail)) {
+            nextErrors.preferredContactEmail = 'Use a valid email address (must start with a letter or number)';
+        }
+
+        if (form.preferredContactPhone && !phoneRegex.test(form.preferredContactPhone)) {
+            nextErrors.preferredContactPhone = 'Phone number must start with 0 and contain exactly 10 digits';
         }
 
         if (selectedFiles.length > 3) {
@@ -292,10 +298,24 @@ function EditIncidentPage() {
                                 type="file"
                                 accept="image/jpeg,image/png,image/webp,image/jpg"
                                 multiple
+                                onClick={(event) => {
+                                    event.target.value = '';
+                                }}
                                 onChange={(event) => {
                                     const files = Array.from(event.target.files || []);
-                                    setSelectedFiles(files);
-                                    setErrors((prev) => ({ ...prev, attachments: '' }));
+                                    const limitedFiles = files.slice(0, 3);
+                                    if (files.length > 3) {
+                                        toast.warning('You can upload maximum 3 images. Only first 3 are kept.', {
+                                            toastId: 'attachments-limit-warning'
+                                        });
+                                        setErrors((prev) => ({
+                                            ...prev,
+                                            attachments: 'You can upload maximum 3 images. Only first 3 are kept.'
+                                        }));
+                                    } else {
+                                        setErrors((prev) => ({ ...prev, attachments: '' }));
+                                    }
+                                    setSelectedFiles(limitedFiles);
                                 }}
                             />
                             <div className="incident-helper-box" style={{ marginTop: '8px' }}>
@@ -307,8 +327,13 @@ function EditIncidentPage() {
                                 </ul>
                             </div>
                             {selectedFiles.length > 0 ? (
-                                <div className="incident-meta" style={{ marginTop: '4px' }}>
-                                    {selectedFiles.length} file(s) selected
+                                <div style={{ marginTop: '4px' }}>
+                                    <div className="incident-meta">{selectedFiles.length} file(s) selected</div>
+                                    <ul className="incident-helper-list" style={{ marginTop: '6px' }}>
+                                        {selectedFiles.map((file) => (
+                                            <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
+                                        ))}
+                                    </ul>
                                 </div>
                             ) : null}
                             {errors.attachments ? <div className="incident-error">{errors.attachments}</div> : null}
@@ -349,6 +374,7 @@ function EditIncidentPage() {
                                 maxLength={30}
                                 placeholder="+94 77 123 4567"
                             />
+                            {errors.preferredContactPhone ? <div className="incident-error">{errors.preferredContactPhone}</div> : null}
                         </div>
 
                         {selectedResource ? (
@@ -365,7 +391,7 @@ function EditIncidentPage() {
                             {saving ? 'Saving...' : 'Save Changes'}
                         </button>
                         <button
-                            className="incident-btn-secondary"
+                            className="incident-btn-secondary incident-btn-danger"
                             type="button"
                             disabled={saving || deleting}
                             onClick={handleDelete}

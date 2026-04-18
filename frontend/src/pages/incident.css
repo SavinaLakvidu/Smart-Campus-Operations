@@ -135,6 +135,17 @@
     color: #fff;
 }
 
+.incident-btn-danger {
+    background: linear-gradient(135deg, #b91c1c, #dc2626);
+    color: #ffffff;
+    border: 1px solid #991b1b;
+}
+
+.incident-btn-danger:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
 .incident-btn-ghost {
     background: #fff;
     border: 1px solid var(--brand-border);
@@ -297,6 +308,24 @@
 
 .incident-kv > div {
     color: #0f172a;
+}
+
+.incident-kv-rejection {
+    border: 1px solid #fca5a5;
+    background: linear-gradient(180deg, #fff1f2 0%, #ffe4e6 100%);
+}
+
+.incident-kv-rejection strong {
+    color: #991b1b;
+}
+
+.incident-kv-resolution {
+    border: 1px solid #86efac;
+    background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.incident-kv-resolution strong {
+    color: #166534;
 }
 
 .incident-comments-card {

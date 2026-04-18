@@ -179,6 +179,7 @@ function IncidentTicketDetailsPage() {
     }
 
     const isTechnician = user?.role === 'TECHNICIAN';
+    const isAdmin = user?.role === 'ADMIN';
     const backLink = isTechnician ? '/technician/tickets' : '/incidents';
     const backLabel = isTechnician ? 'Back To Ticket Updates' : 'Back To My Tickets';
     const currentUserId = Number(user?.userId ?? user?.id);
@@ -197,7 +198,7 @@ function IncidentTicketDetailsPage() {
                     )}
                     {canEditOrDelete && (
                         <button
-                            className="incident-btn-secondary"
+                            className="incident-btn-secondary incident-btn-danger"
                             type="button"
                             onClick={handleDeleteTicket}
                             disabled={busyAction === 'delete-ticket'}
@@ -205,7 +206,7 @@ function IncidentTicketDetailsPage() {
                             {busyAction === 'delete-ticket' ? 'Deleting...' : 'Delete Ticket'}
                         </button>
                     )}
-                    {user?.role !== 'TECHNICIAN' && (
+                    {!isTechnician && !isAdmin && (
                         <Link className="incident-btn-secondary" to="/incidents/new">Create Another</Link>
                     )}
                 </div>
@@ -288,7 +289,7 @@ function IncidentTicketDetailsPage() {
                                                         >
                                                             Download
                                                         </button>
-                                                        {!isTechnician && (
+                                                        {!isTechnician && !isAdmin && (
                                                             <button
                                                                 type="button"
                                                                 className="incident-btn-ghost incident-btn-attachment-delete"
@@ -406,14 +407,14 @@ function IncidentTicketDetailsPage() {
                             </div>
 
                             {ticket.rejectionReason ? (
-                                <div className="incident-kv" style={{ marginTop: '12px' }}>
+                                <div className="incident-kv incident-kv-rejection" style={{ marginTop: '12px' }}>
                                     <strong>REJECTION REASON</strong>
                                     <div style={{ whiteSpace: 'pre-wrap' }}>{ticket.rejectionReason}</div>
                                 </div>
                             ) : null}
 
                             {ticket.resolutionNotes ? (
-                                <div className="incident-kv" style={{ marginTop: '12px' }}>
+                                <div className="incident-kv incident-kv-resolution" style={{ marginTop: '12px' }}>
                                     <strong>RESOLUTION NOTES</strong>
                                     <div style={{ whiteSpace: 'pre-wrap' }}>{ticket.resolutionNotes}</div>
                                 </div>
