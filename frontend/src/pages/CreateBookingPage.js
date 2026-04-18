@@ -51,7 +51,7 @@ function CreateBookingPage() {
     };
 
     return (
-        <div className="row justify-content-center">
+        <div className="row justify-content-center"style={{padding:'100px'}}>
             <div className="col-md-6">
                 <div className="card shadow">
                     <div className="card-header text-white" style={{ backgroundColor: "#111111" }}>
