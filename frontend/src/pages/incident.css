@@ -13,7 +13,7 @@
         radial-gradient(1200px 300px at 10% -10%, #d9f5f2 10%, transparent 60%),
         radial-gradient(900px 240px at 100% 0%, #fff4d6 10%, transparent 65%),
         linear-gradient(180deg, #f8fbfb 0%, #f4f7f8 100%);
-    padding: 24px 0 48px;
+    padding: 116px 0 48px;
 }
 
 .incident-page {
@@ -445,6 +445,10 @@
 }
 
 @media (max-width: 900px) {
+    .incident-shell {
+        padding-top: 104px;
+    }
+
     .incident-grid,
     .incident-detail-grid {
         grid-template-columns: 1fr;

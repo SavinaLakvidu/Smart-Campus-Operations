@@ -119,6 +119,27 @@ function Navbar() {
                         display: flex !important;
                     }
                 }
+
+                @media (max-width: 1399.98px) {
+                    .zentrix-compact-link {
+                        padding: 8px 11px !important;
+                        font-size: 0.88rem !important;
+                    }
+
+                    .zentrix-user-chip {
+                        font-size: 0.66rem !important;
+                        padding: 5px 8px !important;
+                        letter-spacing: 0.5px !important;
+                    }
+
+                    .zentrix-username {
+                        max-width: 86px !important;
+                    }
+
+                    .zentrix-logout {
+                        padding: 8px 12px !important;
+                    }
+                }
             `;
             document.head.appendChild(styleSheet);
         }
@@ -136,9 +157,9 @@ function Navbar() {
     const navLinkStyle = (path) => ({
         color: isActive(path) ? '#ffffff' : '#9ca3af',
         textDecoration: 'none',
-        fontSize: '0.95rem',
+        fontSize: '0.9rem',
         fontWeight: isActive(path) ? '600' : '500',
-        padding: '10px 16px',
+        padding: '8px 12px',
         borderRadius: '999px',
         transition: 'all 0.2s ease',
         backgroundColor: isActive(path) ? '#1f2937' : 'transparent',
@@ -190,7 +211,7 @@ function Navbar() {
                     style={{
                         maxWidth: '1280px',
                         margin: '0 auto',
-                        padding: '0 28px',
+                        padding: '0 18px',
                         minHeight: '72px'
                     }}
                 >
@@ -214,17 +235,17 @@ function Navbar() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="d-none d-lg-flex align-items-center gap-1">
-                        <Link to="/" style={navLinkStyle('/')}>Home</Link>
-                        <Link to="/about" style={navLinkStyle('/about')}>About Us</Link>
-                        <Link to="/contact" style={navLinkStyle('/contact')}>Contact Us</Link>
+                    <div className="d-none d-lg-flex align-items-center gap-1" style={{ minWidth: 0 }}>
+                        <Link className="zentrix-compact-link" to="/" style={navLinkStyle('/')}>Home</Link>
+                        <Link className="zentrix-compact-link" to="/about" style={navLinkStyle('/about')}>About Us</Link>
+                        <Link className="zentrix-compact-link" to="/contact" style={navLinkStyle('/contact')}>Contact Us</Link>
 
                         {isLoggedIn && (
                             <>
-                                <Link to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
+                                <Link className="zentrix-compact-link" to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
 
                                 {(isStudent || isStaff || isAdmin) && (
-                                    <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>
+                                    <Link className="zentrix-compact-link" to="/bookings/new" style={navLinkStyle('/bookings/new')}>
                                         New Booking
                                     </Link>
                                 )}
@@ -233,10 +254,10 @@ function Navbar() {
                                     <>
                                         {(isStudent || isStaff) && (
                                             <>
-                                                <Link to="/incidents" style={navLinkStyle('/incidents')}>
+                                                <Link className="zentrix-compact-link" to="/incidents" style={navLinkStyle('/incidents')}>
                                                     My Tickets
                                                 </Link>
-                                                <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>
+                                                <Link className="zentrix-compact-link" to="/incidents/new" style={navLinkStyle('/incidents/new')}>
                                                     Report Incident
                                                 </Link>
                                             </>
@@ -244,10 +265,11 @@ function Navbar() {
 
                                         {isTechnician && (
                                             <Link
+                                                className="zentrix-compact-link"
                                                 to="/technician/tickets"
                                                 style={navLinkStyle('/technician/tickets')}
                                             >
-                                                Ticket Updates
+                                                Tecnician panel
                                             </Link>
                                         )}
                                     </>
@@ -353,14 +375,8 @@ function Navbar() {
                         {/* Additional Links for Staff and Technician */}
                         {isLoggedIn && !isAdmin && (
                             <>
-                                {isTechnician && (
-                                    <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>
-                                        Technician Panel
-                                    </Link>
-                                )}
-
                                 {isStaff && (
-                                    <Link to="/staff/dashboard" style={navLinkStyle('/staff/dashboard')}>
+                                    <Link className="zentrix-compact-link" to="/staff/dashboard" style={navLinkStyle('/staff/dashboard')}>
                                         Staff Area
                                     </Link>
                                 )}
@@ -369,7 +385,7 @@ function Navbar() {
                     </div>
 
                     {/* Right Section */}
-                    <div className="d-flex align-items-center gap-3">
+                    <div className="d-flex align-items-center gap-2" style={{ minWidth: 0, flexShrink: 0 }}>
                         {isLoggedIn ? (
                             <>
                                 {/* Bell Icon */}
@@ -446,13 +462,14 @@ function Navbar() {
 
                                 {/* Role Badge */}
                                 <span
+                                    className="zentrix-user-chip"
                                     style={{
                                         background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
                                         color: '#d1d5db',
                                         fontSize: '0.72rem',
                                         fontWeight: '700',
                                         letterSpacing: '0.7px',
-                                        padding: '6px 12px',
+                                        padding: '6px 10px',
                                         borderRadius: '999px',
                                         border: '1px solid rgba(255, 255, 255, 0.2)'
                                     }}
@@ -462,10 +479,15 @@ function Navbar() {
 
                                 {/* User Name */}
                                 <span
+                                    className="zentrix-username"
                                     style={{
                                         color: '#ffffff',
-                                        fontSize: '0.92rem',
-                                        fontWeight: '600'
+                                        fontSize: '0.9rem',
+                                        fontWeight: '600',
+                                        maxWidth: '120px',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap'
                                     }}
                                 >
                                     {user?.username}
@@ -473,13 +495,14 @@ function Navbar() {
 
                                 {/* Logout Button */}
                                 <button
+                                    className="zentrix-logout"
                                     onClick={logout}
                                     style={{
                                         background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
                                         border: '1px solid rgba(239, 68, 68, 0.3)',
                                         color: '#ef4444',
                                         fontSize: '0.85rem',
-                                        padding: '10px 18px',
+                                        padding: '9px 14px',
                                         borderRadius: '999px',
                                         cursor: 'pointer',
                                         transition: 'all 0.2s ease',
@@ -603,7 +626,7 @@ function Navbar() {
 
                                 {isTechnician && (
                                     <Link to="/technician/tickets" style={{...navLinkStyle('/technician/tickets'), display: 'block'}}>
-                                        Technician Panel
+                                        Tecnician panel
                                     </Link>
                                 )}
 
@@ -616,6 +639,24 @@ function Navbar() {
                                 <Link to="/notifications" style={{...navLinkStyle('/notifications'), display: 'block'}}>
                                     Notifications
                                 </Link>
+
+                                <button
+                                    onClick={logout}
+                                    style={{
+                                        width: '100%',
+                                        textAlign: 'left',
+                                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                                        color: '#ffffff',
+                                        fontSize: '0.9rem',
+                                        fontWeight: '600',
+                                        padding: '10px 16px',
+                                        borderRadius: '10px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Logout
+                                </button>
                             </>
                         )}
                     </div>
