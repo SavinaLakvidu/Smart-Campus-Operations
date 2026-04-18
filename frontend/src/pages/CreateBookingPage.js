@@ -69,7 +69,7 @@ function CreateBookingPage() {
     if (loading) {
         return (
             <div style={styles.loadingContainer}>
-                <div style={styles.loadingSpinner}></div>
+                <div style={styles.pageloadingSpinner}></div>
                 <p style={styles.loadingText}>Loading resources...</p>
             </div>
         );
@@ -291,7 +291,7 @@ const styles = {
         gap: '16px'
     },
 
-    loadingSpinner: {
+    pageloadingSpinner: {
         width: '48px',
         height: '48px',
         border: '3px solid #e5e7eb',
