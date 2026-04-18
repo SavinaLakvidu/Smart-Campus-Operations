@@ -193,7 +193,7 @@ function AdminTicketManagementPage() {
     }, [filters.status, filters.priority, filters.category]);
 
     return (
-        <div className="incident-shell">
+        <div className="incident-shell"style={{padding:'100px'}}>
             <div className="incident-page">
                 <h1 className="incident-headline">Ticket Management</h1>
                 <p className="incident-subtext">Admin console for assigning tickets and enforcing workflow transitions.</p>

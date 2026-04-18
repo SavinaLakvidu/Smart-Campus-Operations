@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
@@ -11,6 +11,10 @@ function Navbar() {
     const [unreadCount, setUnreadCount] = useState(0);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+    
+    const dropdownRef = useRef(null);
 
     const fetchUnreadCount = useCallback(async () => {
         try {
@@ -31,6 +35,54 @@ function Navbar() {
             return () => clearInterval(interval);
         }
     }, [isLoggedIn, fetchUnreadCount]);
+
+    // Handle scroll visibility
+    useEffect(() => {
+        const controlNavbar = () => {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+            
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', controlNavbar);
+        return () => {
+            window.removeEventListener('scroll', controlNavbar);
+        };
+    }, [lastScrollY]);
+
+    // Handle click outside to close dropdown
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setAdminDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Close dropdown when escape key is pressed
+    useEffect(() => {
+        const handleEscKey = (event) => {
+            if (event.key === 'Escape' && adminDropdownOpen) {
+                setAdminDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('keydown', handleEscKey);
+        return () => {
+            document.removeEventListener('keydown', handleEscKey);
+        };
+    }, [adminDropdownOpen]);
 
     useEffect(() => {
         if (!document.getElementById('zentrix-navbar-styles')) {
@@ -58,8 +110,8 @@ function Navbar() {
                 }
 
                 .zentrix-dropdown-item:hover {
-                    background-color: #f3f4f6 !important;
-                    color: #000000 !important;
+                    background: linear-gradient(135deg, #1f2937, #111827) !important;
+                    color: #ffffff !important;
                 }
 
                 @media (max-width: 991.98px) {
@@ -89,14 +141,14 @@ function Navbar() {
         padding: '10px 16px',
         borderRadius: '999px',
         transition: 'all 0.2s ease',
-        backgroundColor: isActive(path) ? '#000000' : 'transparent',
+        backgroundColor: isActive(path) ? '#1f2937' : 'transparent',
         whiteSpace: 'nowrap'
     });
 
     const menuLinkStyle = {
         display: 'block',
         padding: '10px 16px',
-        color: '#9ca3af',
+        color: '#d1d5db',
         textDecoration: 'none',
         fontSize: '0.9rem',
         borderRadius: '10px',
@@ -104,21 +156,30 @@ function Navbar() {
         transition: 'all 0.2s ease'
     };
 
+    const toggleAdminDropdown = () => {
+        setAdminDropdownOpen(!adminDropdownOpen);
+    };
+
     return (
         <div
             style={{
-                position: 'sticky',
+                position: 'fixed',
                 top: 0,
+                left: 0,
+                right: 0,
                 zIndex: 1000,
                 backgroundColor: '#f9f9f9',
-                padding: '16px 20px 0'
+                padding: '16px 20px 16px',
+                transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
+                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                
             }}
         >
             <nav
                 style={{
                     maxWidth: '1480px',
                     margin: '0 auto',
-                    background: 'linear-gradient(135deg, #000000, #434141)',
+                    background: 'linear-gradient(135deg, #000000, #1a1a1a)',
                     borderRadius: '999px',
                     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
                     overflow: 'visible'
@@ -194,16 +255,16 @@ function Navbar() {
                             </>
                         )}
 
-                        {/* Admin Dropdown */}
+                        {/* Admin Dropdown - Click to open */}
                         {isLoggedIn && isAdmin && (
                             <div
+                                ref={dropdownRef}
                                 style={{ position: 'relative' }}
-                                onMouseEnter={() => setAdminDropdownOpen(true)}
-                                onMouseLeave={() => setAdminDropdownOpen(false)}
                             >
                                 <button
+                                    onClick={toggleAdminDropdown}
                                     style={{
-                                        backgroundColor: adminDropdownOpen ? '#1a1a1a' : 'transparent',
+                                        backgroundColor: adminDropdownOpen ? '#1f2937' : 'transparent',
                                         border: 'none',
                                         color: adminDropdownOpen ? '#ffffff' : '#9ca3af',
                                         fontSize: '0.95rem',
@@ -218,7 +279,16 @@ function Navbar() {
                                     }}
                                 >
                                     Admin
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <svg 
+                                        width="12" 
+                                        height="12" 
+                                        viewBox="0 0 12 12" 
+                                        fill="none"
+                                        style={{
+                                            transform: adminDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                                            transition: 'transform 0.2s ease'
+                                        }}
+                                    >
                                         <path
                                             d="M3 4.5L6 7.5L9 4.5"
                                             stroke="currentColor"
@@ -234,8 +304,8 @@ function Navbar() {
                                             position: 'absolute',
                                             top: '100%',
                                             right: 0,
-                                            backgroundColor: '#1a1a1a',
-                                            border: '1px solid #374151',
+                                            background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
+                                            border: '1px solid rgba(255, 255, 255, 0.1)',
                                             borderRadius: '18px',
                                             padding: '8px 0',
                                             minWidth: '220px',
@@ -246,17 +316,32 @@ function Navbar() {
                                         }}
                                     >
                                         <li>
-                                            <Link className="zentrix-dropdown-item" to="/admin/tickets" style={menuLinkStyle}>
+                                            <Link 
+                                                className="zentrix-dropdown-item" 
+                                                to="/admin/tickets" 
+                                                style={menuLinkStyle}
+                                                onClick={() => setAdminDropdownOpen(false)}
+                                            >
                                                 Ticket Management
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link className="zentrix-dropdown-item" to="/admin/users" style={menuLinkStyle}>
+                                            <Link 
+                                                className="zentrix-dropdown-item" 
+                                                to="/admin/users" 
+                                                style={menuLinkStyle}
+                                                onClick={() => setAdminDropdownOpen(false)}
+                                            >
                                                 User Management
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link className="zentrix-dropdown-item" to="/admin/bookings" style={menuLinkStyle}>
+                                            <Link 
+                                                className="zentrix-dropdown-item" 
+                                                to="/admin/bookings" 
+                                                style={menuLinkStyle}
+                                                onClick={() => setAdminDropdownOpen(false)}
+                                            >
                                                 Booking Approvals
                                             </Link>
                                         </li>
@@ -297,20 +382,20 @@ function Navbar() {
                                             width: '42px',
                                             height: '42px',
                                             borderRadius: '50%',
-                                            border: '1px solid #374151',
+                                            border: '1px solid rgba(255, 255, 255, 0.2)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            backgroundColor: '#1a1a1a',
+                                            background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
                                             transition: 'all 0.2s ease'
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#2d2d2d';
-                                            e.currentTarget.style.borderColor = '#4a4a4a';
+                                            e.currentTarget.style.background = 'linear-gradient(135deg, #2d2d2d, #1a1a1a)';
+                                            e.currentTarget.style.transform = 'scale(1.05)';
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#1a1a1a';
-                                            e.currentTarget.style.borderColor = '#374151';
+                                            e.currentTarget.style.background = 'linear-gradient(135deg, #1a1a1a, #0a0a0a)';
+                                            e.currentTarget.style.transform = 'scale(1)';
                                         }}
                                     >
                                         <svg
@@ -322,13 +407,13 @@ function Navbar() {
                                         >
                                             <path
                                                 d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
-                                                stroke="#9ca3af"
+                                                stroke="#d1d5db"
                                                 strokeWidth="1.7"
                                                 fill="none"
                                             />
                                             <path
                                                 d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"
-                                                stroke="#9ca3af"
+                                                stroke="#d1d5db"
                                                 strokeWidth="1.7"
                                                 fill="none"
                                             />
@@ -349,7 +434,7 @@ function Navbar() {
                                                     minWidth: '18px',
                                                     textAlign: 'center',
                                                     lineHeight: '1.2',
-                                                    border: '2px solid #000000',
+                                                    border: '2px solid #1a1a1a',
                                                     animation: 'pulseBadge 2s infinite'
                                                 }}
                                             >
@@ -362,14 +447,14 @@ function Navbar() {
                                 {/* Role Badge */}
                                 <span
                                     style={{
-                                        backgroundColor: '#1a1a1a',
-                                        color: '#9ca3af',
+                                        background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
+                                        color: '#d1d5db',
                                         fontSize: '0.72rem',
                                         fontWeight: '700',
                                         letterSpacing: '0.7px',
                                         padding: '6px 12px',
                                         borderRadius: '999px',
-                                        border: '1px solid #374151'
+                                        border: '1px solid rgba(255, 255, 255, 0.2)'
                                     }}
                                 >
                                     {user?.role}
@@ -390,9 +475,9 @@ function Navbar() {
                                 <button
                                     onClick={logout}
                                     style={{
-                                        backgroundColor: '#1a1a1a',
-                                        border: '1px solid #374151',
-                                        color: '#9ca3af',
+                                        background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
+                                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                                        color: '#ef4444',
                                         fontSize: '0.85rem',
                                         padding: '10px 18px',
                                         borderRadius: '999px',
@@ -401,14 +486,14 @@ function Navbar() {
                                         fontWeight: '600'
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = '#ef4444';
-                                        e.currentTarget.style.borderColor = '#ef4444';
+                                        e.currentTarget.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
                                         e.currentTarget.style.color = '#ffffff';
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = '#1a1a1a';
-                                        e.currentTarget.style.borderColor = '#374151';
-                                        e.currentTarget.style.color = '#9ca3af';
+                                        e.currentTarget.style.background = 'linear-gradient(135deg, #1a1a1a, #0a0a0a)';
+                                        e.currentTarget.style.color = '#ef4444';
+                                        e.currentTarget.style.transform = 'translateY(0)';
                                     }}
                                 >
                                     Logout
@@ -419,7 +504,7 @@ function Navbar() {
                                 to="/login"
                                 style={{
                                     backgroundColor: '#ffffff',
-                                    color: '#000000',
+                                    color: '#111827',
                                     fontSize: '0.9rem',
                                     fontWeight: '600',
                                     padding: '11px 22px',
@@ -428,10 +513,12 @@ function Navbar() {
                                     transition: 'all 0.2s ease'
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#e5e7eb';
+                                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.backgroundColor = '#ffffff';
+                                    e.currentTarget.style.transform = 'translateY(0)';
                                 }}
                             >
                                 Login
@@ -443,8 +530,8 @@ function Navbar() {
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             style={{
                                 display: 'none',
-                                backgroundColor: '#1a1a1a',
-                                border: '1px solid #374151',
+                                background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
                                 borderRadius: '10px',
                                 color: '#ffffff',
                                 cursor: 'pointer',
@@ -479,11 +566,12 @@ function Navbar() {
                         className="zentrix-mobile-menu"
                         style={{
                             display: 'none',
-                            backgroundColor: '#000000',
-                            borderTop: '1px solid #1f2937',
+                            background: 'linear-gradient(135deg, #0a0a0a, #1a1a1a)',
+                            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
                             padding: '16px 20px 20px',
                             flexDirection: 'column',
-                            gap: '8px'
+                            gap: '8px',
+                            borderRadius: '0 0 20px 20px'
                         }}
                     >
                         <Link to="/" style={{...navLinkStyle('/'), display: 'block'}}>Home</Link>
