@@ -287,7 +287,7 @@ function IncidentTicketDetailsPage() {
                                                             className="incident-btn-ghost incident-btn-attachment-download"
                                                             onClick={() => handleDownloadAttachment(attachment)}
                                                         >
-                                                            Download
+                                                            Download <span className="incident-download-icon">⬇</span>
                                                         </button>
                                                         {!isTechnician && !isAdmin && (
                                                             <button
