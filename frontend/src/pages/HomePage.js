@@ -53,7 +53,7 @@ function HomePage() {
             setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
         }, 6000);
         return () => clearInterval(interval);
-    }, []);
+    }, [carouselSlides.length]);
 
     const features = [
         {
