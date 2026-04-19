@@ -3,16 +3,14 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import BookingListPage from './pages/BookingListPage.js';
-import CreateBookingPage from './pages/CreateBookingPage.js';
-import AdminBookingsPage from './pages/AdminBookingPage.js';
-import AdminUsersPage from './pages/AdminUsersPage.js';
-import NotificationsPage from './pages/NotificationsPage.js';
+// Pages
 import HomePage from './pages/HomePage';
-import Navbar from './components/navbar.js';
+import BookingListPage from './pages/BookingListPage';
+import CreateBookingPage from './pages/CreateBookingPage';
+import AdminBookingsPage from './pages/AdminBookingPage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import NotificationsPage from './pages/NotificationsPage';
 import LoginPage from './pages/LoginPage';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
 import CreateIncidentPage from './pages/CreateIncidentPage';
 import EditIncidentPage from './pages/EditIncidentPage';
 import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
@@ -21,6 +19,14 @@ import AdminTicketManagementPage from './pages/AdminTicketManagementPage';
 import TechnicianTicketUpdatesPage from './pages/TechnicianTicketUpdatesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import ResourceCataloguePage from './pages/ResourceCataloguePage'; // ✅ IMPORTANT
+
+// Components
+import Navbar from './components/navbar';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Context
+import { AuthProvider } from './context/AuthContext';
 
 function AppContent() {
   const location = useLocation();
@@ -33,8 +39,14 @@ function AppContent() {
       <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
         <div className="container pt-4">
           <Routes>
+
+            {/* Home */}
             <Route path="/" element={<HomePage />} />
 
+            {/* ✅ Resource Catalogue (your part) */}
+            <Route path="/resources" element={<ResourceCataloguePage />} />
+
+            {/* Booking */}
             <Route
               path="/bookings"
               element={
@@ -53,6 +65,7 @@ function AppContent() {
               }
             />
 
+            {/* Admin */}
             <Route
               path="/admin/bookings"
               element={
@@ -71,6 +84,7 @@ function AppContent() {
               }
             />
 
+            {/* Notifications */}
             <Route
               path="/notifications"
               element={
@@ -80,6 +94,7 @@ function AppContent() {
               }
             />
 
+            {/* Incidents */}
             <Route
               path="/incidents"
               element={
@@ -108,6 +123,16 @@ function AppContent() {
             />
 
             <Route
+              path="/incidents/:ticketId"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
+                  <IncidentTicketDetailsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Technician */}
+            <Route
               path="/technician/tickets"
               element={
                 <ProtectedRoute allowedRoles={["TECHNICIAN"]}>
@@ -116,6 +141,7 @@ function AppContent() {
               }
             />
 
+            {/* Admin Tickets */}
             <Route
               path="/admin/tickets"
               element={
@@ -125,22 +151,16 @@ function AppContent() {
               }
             />
 
-            <Route
-              path="/incidents/:ticketId"
-              element={
-                <ProtectedRoute allowedRoles={["STUDENT", "STAFF", "TECHNICIAN", "ADMIN"]}>
-                  <IncidentTicketDetailsPage />
-                </ProtectedRoute>
-              }
-            />
-
+            {/* Public Pages */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+
           </Routes>
         </div>
       </div>
 
+      {/* Footer */}
       {!hideNavbar && (
         <footer
           style={{
@@ -153,15 +173,15 @@ function AppContent() {
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div className="row align-items-center">
               <div className="col-md-6">
-                <div style={{ fontWeight: '700', fontSize: '1.1rem', marginBottom: '4px' }}>
+                <div style={{ fontWeight: '700', fontSize: '1.1rem' }}>
                   🏫 Smart Campus Operations Hub
                 </div>
-                <div style={{ color: '#888888', fontSize: '0.85rem' }}>
+                <div style={{ color: '#888', fontSize: '0.85rem' }}>
                   IT3030 – Programming Applications and Frameworks | SLIIT 2026
                 </div>
               </div>
-              <div className="col-md-6 text-md-end mt-3 mt-md-0">
-                <div style={{ color: '#888888', fontSize: '0.85rem' }}>
+              <div className="col-md-6 text-md-end">
+                <div style={{ color: '#888', fontSize: '0.85rem' }}>
                   Built with Spring Boot & React
                 </div>
               </div>
