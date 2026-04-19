@@ -90,7 +90,7 @@ function Navbar() {
                 right: 0,
                 zIndex: 1000,
                 backgroundColor: '#f9f9f9',
-                padding: '12px 20px 10px',
+                padding: '12px 20px',
                 transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
                 transition: 'transform 0.3s ease',
                 boxShadow: isVisible ? '0 2px 10px rgba(0,0,0,0.05)' : 'none'
