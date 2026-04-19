@@ -177,6 +177,7 @@ function NotificationsPage() {
         .notifications-container {
           max-width: 1000px;
           margin: 0 auto;
+          padding:70px;
         }
 
         /* Loading Styles */

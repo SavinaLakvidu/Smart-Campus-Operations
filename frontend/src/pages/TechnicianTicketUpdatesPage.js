@@ -131,7 +131,7 @@ function TechnicianTicketUpdatesPage() {
     }, [statusFilter]);
 
     return (
-        <div className="incident-shell">
+        <div className="incident-shell"style={{padding:'100px'}}>
             <div className="incident-page">
                 <h1 className="incident-headline">Ticket Updates</h1>
                 <p className="incident-subtext">View your assigned tickets, inspect details, and update statuses.</p>

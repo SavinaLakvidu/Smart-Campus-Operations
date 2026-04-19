@@ -111,7 +111,7 @@ function AdminUsersPage() {
           block: 'start' 
         });
         editSectionRef.current.style.transition = 'all 0.3s ease';
-        editSectionRef.current.style.boxShadow = '0 0 0 3px #3b82f6';
+        editSectionRef.current.style.boxShadow = '0 0 0 3px #b9fffa';
         setTimeout(() => {
           if (editSectionRef.current) {
             editSectionRef.current.style.boxShadow = '';
@@ -188,7 +188,7 @@ function AdminUsersPage() {
     <div className="incident-shell">
       <div className="incident-page">
         {/* Header with Circular User Count */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' ,padding:'100px'}}>
           <div>
             <h1 className="incident-headline" style={{ fontSize: '3rem' }}>User Management</h1>
             <p className="incident-subtext" style={{ fontSize: '1.5rem' }}>Manage and control all user accounts</p>
@@ -212,7 +212,7 @@ function AdminUsersPage() {
         </div>
 
         {/* Add User Card */}
-        <div className="incident-card" style={{ marginBottom: '20px' }}>
+        <div className="incident-card" style={{ marginBottom: '20px',padding:'30px 30px 30px' }}>
           <h2 className="incident-section-title" style={{ fontSize: '1.65rem' }}>Add New User</h2>
           <p className="incident-subtext" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>Create a new user account</p>
 
@@ -294,7 +294,7 @@ function AdminUsersPage() {
 
         {/* Edit User Card */}
         {editUserId && (
-          <div ref={editSectionRef} className="incident-card" style={{ marginBottom: '20px', border: '2px solid #3b82f6' }}>
+          <div ref={editSectionRef} className="incident-card" style={{ marginBottom: '20px', border: '2px solid #bbfffc',padding:'30px 30px 30px'  }}>
             <h2 className="incident-section-title" style={{ fontSize: '1.65rem' }}>Edit User</h2>
             <p className="incident-subtext" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>Update user information</p>
 
@@ -382,7 +382,7 @@ function AdminUsersPage() {
         )}
 
         {/* Search Card */}
-        <div className="incident-card" style={{ marginBottom: '20px' }}>
+        <div className="incident-card" style={{ marginBottom: '20px' ,padding:'30px 30px 30px' }}>
           <h2 className="incident-section-title" style={{ fontSize: '1.65rem' }}>Search & Filter</h2>
           <p className="incident-subtext" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>Find specific users quickly</p>
 
@@ -457,14 +457,14 @@ function AdminUsersPage() {
         )}
 
         {/* Users Table */}
-        <div className="incident-card">
+        <div className="incident-card"style={{padding:'30px 30px 30px' }}>
           <h2 className="incident-section-title" style={{ fontSize: '1.65rem' }}>User List</h2>
           <p className="incident-subtext" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>Manage existing users</p>
 
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '2px solid #f3f4f6' }}>
+                <tr style={{ borderBottom: '2px solid #111827' }}>
                   <th style={{ textAlign: 'left', padding: '12px', fontSize: '0.8rem', fontWeight: '800', color: '#000000' }}>ID</th>
                   <th style={{ textAlign: 'left', padding: '12px', fontSize: '0.8rem', fontWeight: '800', color: '#000000' }}>Username</th>
                   <th style={{ textAlign: 'left', padding: '12px', fontSize: '0.8rem', fontWeight: '800', color: '#000000' }}>Email</th>
@@ -476,7 +476,7 @@ function AdminUsersPage() {
               <tbody>
                 {users.length > 0 ? (
                   users.map((u) => (
-                    <tr key={u.userId} style={{ borderBottom: '1px solid #f3f4f6', transition: 'background-color 0.2s ease' }}>
+                    <tr key={u.userId} style={{ borderBottom: '1px solid #111827', transition: 'background-color 0.2s ease' }}>
                       <td style={{ padding: '12px', fontSize: '0.875rem', color: '#6b7280' }}>
                         <span style={{ fontWeight: '500' }}>#{u.userId}</span>
                       </td>
