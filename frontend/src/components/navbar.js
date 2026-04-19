@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
@@ -13,8 +13,6 @@ function Navbar() {
     const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
-    
-    const dropdownRef = useRef(null);
 
     const fetchUnreadCount = useCallback(async () => {
         try {
@@ -40,89 +38,16 @@ function Navbar() {
     useEffect(() => {
         const controlNavbar = () => {
             const currentScrollY = window.scrollY;
-            
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
                 setIsVisible(false);
             } else {
                 setIsVisible(true);
             }
-            
             setLastScrollY(currentScrollY);
         };
-
         window.addEventListener('scroll', controlNavbar);
-        return () => {
-            window.removeEventListener('scroll', controlNavbar);
-        };
+        return () => window.removeEventListener('scroll', controlNavbar);
     }, [lastScrollY]);
-
-    // Handle click outside to close dropdown
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setAdminDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    // Close dropdown when escape key is pressed
-    useEffect(() => {
-        const handleEscKey = (event) => {
-            if (event.key === 'Escape' && adminDropdownOpen) {
-                setAdminDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener('keydown', handleEscKey);
-        return () => {
-            document.removeEventListener('keydown', handleEscKey);
-        };
-    }, [adminDropdownOpen]);
-
-    useEffect(() => {
-        if (!document.getElementById('zentrix-navbar-styles')) {
-            const styleSheet = document.createElement('style');
-            styleSheet.id = 'zentrix-navbar-styles';
-            styleSheet.textContent = `
-                @keyframes pulseBadge {
-                    0%, 100% { transform: scale(1); }
-                    50% { transform: scale(1.08); }
-                }
-
-                @keyframes fadeInMenu {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-8px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-
-                .zentrix-dropdown-item {
-                    transition: all 0.2s ease !important;
-                }
-
-                .zentrix-dropdown-item:hover {
-                    background: linear-gradient(135deg, #1f2937, #111827) !important;
-                    color: #ffffff !important;
-                }
-
-                @media (max-width: 991.98px) {
-                    .zentrix-mobile-menu {
-                        display: flex !important;
-                    }
-                }
-            `;
-            document.head.appendChild(styleSheet);
-        }
-    }, []);
 
     if (loading) return null;
 
@@ -136,492 +61,337 @@ function Navbar() {
     const navLinkStyle = (path) => ({
         color: isActive(path) ? '#ffffff' : '#9ca3af',
         textDecoration: 'none',
-        fontSize: '0.95rem',
+        fontSize: '0.9rem',
         fontWeight: isActive(path) ? '600' : '500',
-        padding: '10px 16px',
+        padding: '8px 14px',
         borderRadius: '999px',
         transition: 'all 0.2s ease',
         backgroundColor: isActive(path) ? '#1f2937' : 'transparent',
         whiteSpace: 'nowrap'
     });
 
-    const menuLinkStyle = {
-        display: 'block',
-        padding: '10px 16px',
-        color: '#d1d5db',
+    const mobileLinkStyle = (path) => ({
+        color: isActive(path) ? '#84cc16' : '#ffffff',
         textDecoration: 'none',
-        fontSize: '0.9rem',
-        borderRadius: '10px',
-        margin: '4px 8px',
-        transition: 'all 0.2s ease'
-    };
-
-    const toggleAdminDropdown = () => {
-        setAdminDropdownOpen(!adminDropdownOpen);
-    };
+        fontSize: '1rem',
+        fontWeight: isActive(path) ? '600' : '500',
+        padding: '12px 16px',
+        display: 'block',
+        borderBottom: '1px solid rgba(255,255,255,0.1)'
+    });
 
     return (
-        <div
-            style={{
+        <>
+            {/* Navbar Container */}
+            <div style={{
                 position: 'fixed',
                 top: 0,
                 left: 0,
                 right: 0,
                 zIndex: 1000,
                 backgroundColor: '#f9f9f9',
-                padding: '16px 20px 16px',
+                padding: '12px 20px 10px',
                 transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
-                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                
-            }}
-        >
-            <nav
-                style={{
-                    maxWidth: '1480px',
+                transition: 'transform 0.3s ease',
+                boxShadow: isVisible ? '0 2px 10px rgba(0,0,0,0.05)' : 'none'
+            }}>
+                <nav style={{
+                    maxWidth: '1400px',
                     margin: '0 auto',
                     background: 'linear-gradient(135deg, #000000, #1a1a1a)',
-                    borderRadius: '999px',
-                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                    borderRadius: '50px',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
                     overflow: 'visible'
-                }}
-            >
-                <div
-                    className="container d-flex align-items-center justify-content-between"
-                    style={{
-                        maxWidth: '1280px',
-                        margin: '0 auto',
-                        padding: '0 28px',
-                        minHeight: '72px'
-                    }}
-                >
-                    {/* Logo */}
-                    <Link
-                        to="/"
-                        style={{
-                            color: '#ffffff',
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0 20px',
+                        minHeight: '65px'
+                    }}>
+                        {/* Logo */}
+                        <Link to="/" style={{
                             textDecoration: 'none',
                             fontWeight: '800',
-                            fontSize: '1.35rem',
-                            letterSpacing: '-0.5px',
-                            whiteSpace: 'nowrap',
+                            fontSize: '1.2rem',
                             background: 'linear-gradient(135deg, #ffffff, #9ca3af)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text'
-                        }}
-                    >
-                        Zentrix Campus
-                    </Link>
+                        }}>
+                            Zentrix Campus
+                        </Link>
 
-                    {/* Desktop Navigation */}
-                    <div className="d-none d-lg-flex align-items-center gap-1">
-                        <Link to="/" style={navLinkStyle('/')}>Home</Link>
-                        <Link to="/about" style={navLinkStyle('/about')}>About Us</Link>
-                        <Link to="/contact" style={navLinkStyle('/contact')}>Contact Us</Link>
+                        {/* Desktop Navigation */}
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '5px'
+                        }}>
+                            {/* Desktop Links - Hidden on mobile */}
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '5px'
+                            }} className="desktop-nav">
+                                <Link to="/" style={navLinkStyle('/')}>Home</Link>
+                                <Link to="/about" style={navLinkStyle('/about')}>About</Link>
+                                <Link to="/contact" style={navLinkStyle('/contact')}>Contact</Link>
 
-                        {isLoggedIn && (
-                            <>
-                                <Link to="/bookings" style={navLinkStyle('/bookings')}>My Bookings</Link>
-
-                                {(isStudent || isStaff || isAdmin) && (
-                                    <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>
-                                        New Booking
-                                    </Link>
-                                )}
-
-                                {!isAdmin && (
+                                {isLoggedIn && (
                                     <>
-                                        {(isStudent || isStaff) && (
+                                        <Link to="/bookings" style={navLinkStyle('/bookings')}>Bookings</Link>
+                                        {(isStudent || isStaff || isAdmin) && (
+                                            <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>New Booking</Link>
+                                        )}
+                                        {!isAdmin && (isStudent || isStaff) && (
                                             <>
-                                                <Link to="/incidents" style={navLinkStyle('/incidents')}>
-                                                    My Tickets
-                                                </Link>
-                                                <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>
-                                                    Report Incident
-                                                </Link>
+                                                <Link to="/incidents" style={navLinkStyle('/incidents')}>My Tickets</Link>
+                                                <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report</Link>
                                             </>
                                         )}
-
-                                        {isTechnician && (
-                                            <Link
-                                                to="/technician/tickets"
-                                                style={navLinkStyle('/technician/tickets')}
-                                            >
-                                                Ticket Updates
-                                            </Link>
+                                        {isTechnician && !isAdmin && (
+                                            <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Tickets</Link>
                                         )}
                                     </>
                                 )}
-                            </>
-                        )}
 
-                        {/* Admin Dropdown - Click to open */}
-                        {isLoggedIn && isAdmin && (
-                            <div
-                                ref={dropdownRef}
-                                style={{ position: 'relative' }}
-                            >
-                                <button
-                                    onClick={toggleAdminDropdown}
-                                    style={{
-                                        backgroundColor: adminDropdownOpen ? '#1f2937' : 'transparent',
-                                        border: 'none',
-                                        color: adminDropdownOpen ? '#ffffff' : '#9ca3af',
-                                        fontSize: '0.95rem',
-                                        fontWeight: '500',
-                                        padding: '10px 16px',
-                                        cursor: 'pointer',
-                                        borderRadius: '999px',
-                                        transition: 'all 0.2s ease',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '6px'
-                                    }}
-                                >
-                                    Admin
-                                    <svg 
-                                        width="12" 
-                                        height="12" 
-                                        viewBox="0 0 12 12" 
-                                        fill="none"
-                                        style={{
-                                            transform: adminDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                                            transition: 'transform 0.2s ease'
-                                        }}
-                                    >
-                                        <path
-                                            d="M3 4.5L6 7.5L9 4.5"
-                                            stroke="currentColor"
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                        />
-                                    </svg>
-                                </button>
-
-                                {adminDropdownOpen && (
-                                    <ul
-                                        style={{
-                                            position: 'absolute',
-                                            top: '100%',
-                                            right: 0,
-                                            background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
-                                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                                            borderRadius: '18px',
-                                            padding: '8px 0',
-                                            minWidth: '220px',
-                                            marginTop: '10px',
-                                            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)',
-                                            listStyle: 'none',
-                                            animation: 'fadeInMenu 0.2s ease'
-                                        }}
-                                    >
-                                        <li>
-                                            <Link 
-                                                className="zentrix-dropdown-item" 
-                                                to="/admin/tickets" 
-                                                style={menuLinkStyle}
-                                                onClick={() => setAdminDropdownOpen(false)}
-                                            >
-                                                Ticket Management
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link 
-                                                className="zentrix-dropdown-item" 
-                                                to="/admin/users" 
-                                                style={menuLinkStyle}
-                                                onClick={() => setAdminDropdownOpen(false)}
-                                            >
-                                                User Management
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link 
-                                                className="zentrix-dropdown-item" 
-                                                to="/admin/bookings" 
-                                                style={menuLinkStyle}
-                                                onClick={() => setAdminDropdownOpen(false)}
-                                            >
-                                                Booking Approvals
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Additional Links for Staff and Technician */}
-                        {isLoggedIn && !isAdmin && (
-                            <>
-                                {isTechnician && (
-                                    <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>
-                                        Technician Panel
-                                    </Link>
-                                )}
-
-                                {isStaff && (
-                                    <Link to="/staff/dashboard" style={navLinkStyle('/staff/dashboard')}>
-                                        Staff Area
-                                    </Link>
-                                )}
-                            </>
-                        )}
-                    </div>
-
-                    {/* Right Section */}
-                    <div className="d-flex align-items-center gap-3">
-                        {isLoggedIn ? (
-                            <>
-                                {/* Bell Icon */}
-                                <Link
-                                    to="/notifications"
-                                    style={{ position: 'relative', textDecoration: 'none' }}
-                                >
-                                    <div
-                                        style={{
-                                            width: '42px',
-                                            height: '42px',
-                                            borderRadius: '50%',
-                                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
-                                            transition: 'all 0.2s ease'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.background = 'linear-gradient(135deg, #2d2d2d, #1a1a1a)';
-                                            e.currentTarget.style.transform = 'scale(1.05)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.background = 'linear-gradient(135deg, #1a1a1a, #0a0a0a)';
-                                            e.currentTarget.style.transform = 'scale(1)';
-                                        }}
-                                    >
-                                        <svg
-                                            width="20"
-                                            height="20"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
+                                {/* Admin Dropdown */}
+                                {isLoggedIn && isAdmin && (
+                                    <div style={{ position: 'relative' }}>
+                                        <button
+                                            onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
+                                            style={{
+                                                backgroundColor: adminDropdownOpen ? '#1f2937' : 'transparent',
+                                                border: 'none',
+                                                color: adminDropdownOpen ? '#ffffff' : '#9ca3af',
+                                                fontSize: '0.9rem',
+                                                fontWeight: '500',
+                                                padding: '8px 14px',
+                                                cursor: 'pointer',
+                                                borderRadius: '999px',
+                                                transition: 'all 0.2s ease',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px'
+                                            }}
                                         >
-                                            <path
-                                                d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
-                                                stroke="#d1d5db"
-                                                strokeWidth="1.7"
-                                                fill="none"
-                                            />
-                                            <path
-                                                d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"
-                                                stroke="#d1d5db"
-                                                strokeWidth="1.7"
-                                                fill="none"
-                                            />
-                                        </svg>
-
-                                        {unreadCount > 0 && (
-                                            <span
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: '-2px',
-                                                    right: '-2px',
-                                                    backgroundColor: '#ef4444',
-                                                    color: '#ffffff',
-                                                    fontSize: '10px',
-                                                    fontWeight: '700',
-                                                    padding: '2px 6px',
-                                                    borderRadius: '999px',
-                                                    minWidth: '18px',
-                                                    textAlign: 'center',
-                                                    lineHeight: '1.2',
-                                                    border: '2px solid #1a1a1a',
-                                                    animation: 'pulseBadge 2s infinite'
-                                                }}
-                                            >
-                                                {unreadCount > 99 ? '99+' : unreadCount}
-                                            </span>
+                                            Admin
+                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                            </svg>
+                                        </button>
+                                        {adminDropdownOpen && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: '100%',
+                                                right: 0,
+                                                background: '#1a1a1a',
+                                                border: '1px solid #374151',
+                                                borderRadius: '12px',
+                                                padding: '8px 0',
+                                                minWidth: '200px',
+                                                marginTop: '8px',
+                                                boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+                                                zIndex: 100
+                                            }}>
+                                                <Link to="/admin/tickets" style={{ display: 'block', padding: '10px 20px', color: '#d1d5db', textDecoration: 'none', fontSize: '0.85rem' }} onClick={() => setAdminDropdownOpen(false)}>Ticket Management</Link>
+                                                <Link to="/admin/users" style={{ display: 'block', padding: '10px 20px', color: '#d1d5db', textDecoration: 'none', fontSize: '0.85rem' }} onClick={() => setAdminDropdownOpen(false)}>User Management</Link>
+                                                <Link to="/admin/bookings" style={{ display: 'block', padding: '10px 20px', color: '#d1d5db', textDecoration: 'none', fontSize: '0.85rem' }} onClick={() => setAdminDropdownOpen(false)}>Booking Approvals</Link>
+                                            </div>
                                         )}
                                     </div>
-                                </Link>
-
-                                {/* Role Badge */}
-                                <span
-                                    style={{
-                                        background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
-                                        color: '#d1d5db',
-                                        fontSize: '0.72rem',
-                                        fontWeight: '700',
-                                        letterSpacing: '0.7px',
-                                        padding: '6px 12px',
-                                        borderRadius: '999px',
-                                        border: '1px solid rgba(255, 255, 255, 0.2)'
-                                    }}
-                                >
-                                    {user?.role}
-                                </span>
-
-                                {/* User Name */}
-                                <span
-                                    style={{
-                                        color: '#ffffff',
-                                        fontSize: '0.92rem',
-                                        fontWeight: '600'
-                                    }}
-                                >
-                                    {user?.username}
-                                </span>
-
-                                {/* Logout Button */}
-                                <button
-                                    onClick={logout}
-                                    style={{
-                                        background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
-                                        border: '1px solid rgba(239, 68, 68, 0.3)',
-                                        color: '#ef4444',
-                                        fontSize: '0.85rem',
-                                        padding: '10px 18px',
-                                        borderRadius: '999px',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s ease',
-                                        fontWeight: '600'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-                                        e.currentTarget.style.color = '#ffffff';
-                                        e.currentTarget.style.transform = 'translateY(-2px)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = 'linear-gradient(135deg, #1a1a1a, #0a0a0a)';
-                                        e.currentTarget.style.color = '#ef4444';
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                    }}
-                                >
-                                    Logout
-                                </button>
-                            </>
-                        ) : (
-                            <Link
-                                to="/login"
-                                style={{
-                                    backgroundColor: '#ffffff',
-                                    color: '#111827',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600',
-                                    padding: '11px 22px',
-                                    borderRadius: '999px',
-                                    textDecoration: 'none',
-                                    transition: 'all 0.2s ease'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#f3f4f6';
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#ffffff';
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                }}
-                            >
-                                Login
-                            </Link>
-                        )}
-
-                        {/* Mobile Menu Button */}
-                        <button
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            style={{
-                                display: 'none',
-                                background: 'linear-gradient(135deg, #1a1a1a, #0a0a0a)',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                borderRadius: '10px',
-                                color: '#ffffff',
-                                cursor: 'pointer',
-                                padding: '8px 12px'
-                            }}
-                            className="d-lg-none"
-                        >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                {mobileMenuOpen ? (
-                                    <path
-                                        d="M6 18L18 6M6 6L18 18"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                    />
-                                ) : (
-                                    <path
-                                        d="M4 6H20M4 12H20M4 18H20"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                    />
                                 )}
-                            </svg>
-                        </button>
-                    </div>
-                </div>
 
-                {/* Mobile Menu */}
-                {mobileMenuOpen && (
-                    <div
-                        className="zentrix-mobile-menu"
-                        style={{
-                            display: 'none',
-                            background: 'linear-gradient(135deg, #0a0a0a, #1a1a1a)',
-                            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                            padding: '16px 20px 20px',
-                            flexDirection: 'column',
-                            gap: '8px',
-                            borderRadius: '0 0 20px 20px'
-                        }}
-                    >
-                        <Link to="/" style={{...navLinkStyle('/'), display: 'block'}}>Home</Link>
-                        <Link to="/about" style={{...navLinkStyle('/about'), display: 'block'}}>About Us</Link>
-                        <Link to="/contact" style={{...navLinkStyle('/contact'), display: 'block'}}>Contact Us</Link>
+                                {isLoggedIn && !isAdmin && isTechnician && (
+                                    <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Panel</Link>
+                                )}
+                                {isLoggedIn && !isAdmin && isStaff && (
+                                    <Link to="/staff/dashboard" style={navLinkStyle('/staff/dashboard')}>Staff Area</Link>
+                                )}
+                            </div>
+
+                            {/* Right Section */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                {isLoggedIn ? (
+                                    <>
+                                        <Link to="/notifications" style={{ position: 'relative', textDecoration: 'none' }}>
+                                            <div style={{
+                                                width: '36px',
+                                                height: '36px',
+                                                borderRadius: '50%',
+                                                border: '1px solid rgba(255,255,255,0.2)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                background: '#1a1a1a'
+                                            }}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                                    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#d1d5db" strokeWidth="1.7" fill="none"/>
+                                                    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#d1d5db" strokeWidth="1.7" fill="none"/>
+                                                </svg>
+                                                {unreadCount > 0 && (
+                                                    <span style={{
+                                                        position: 'absolute',
+                                                        top: '-2px',
+                                                        right: '-2px',
+                                                        backgroundColor: '#ef4444',
+                                                        color: '#fff',
+                                                        fontSize: '9px',
+                                                        fontWeight: 'bold',
+                                                        padding: '2px 5px',
+                                                        borderRadius: '10px',
+                                                        minWidth: '16px',
+                                                        textAlign: 'center'
+                                                    }}>{unreadCount > 99 ? '99+' : unreadCount}</span>
+                                                )}
+                                            </div>
+                                        </Link>
+
+                                        <span style={{
+                                            background: '#1a1a1a',
+                                            color: '#d1d5db',
+                                            fontSize: '0.7rem',
+                                            fontWeight: '700',
+                                            padding: '4px 10px',
+                                            borderRadius: '20px',
+                                            border: '1px solid rgba(255,255,255,0.2)'
+                                        }}>{user?.role}</span>
+
+                                        <button onClick={logout} style={{
+                                            background: '#1a1a1a',
+                                            border: '1px solid rgba(239,68,68,0.3)',
+                                            color: '#ef4444',
+                                            fontSize: '0.8rem',
+                                            padding: '6px 14px',
+                                            borderRadius: '20px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600'
+                                        }}>Logout</button>
+                                    </>
+                                ) : (
+                                    <Link to="/login" style={{
+                                        backgroundColor: '#fff',
+                                        color: '#111',
+                                        fontSize: '0.85rem',
+                                        fontWeight: '600',
+                                        padding: '8px 20px',
+                                        borderRadius: '20px',
+                                        textDecoration: 'none'
+                                    }}>Login</Link>
+                                )}
+
+                                {/* Mobile Menu Button */}
+                                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{
+                                    display: 'none',
+                                    background: '#1a1a1a',
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    borderRadius: '8px',
+                                    color: '#fff',
+                                    cursor: 'pointer',
+                                    padding: '8px 10px'
+                                }} className="mobile-btn">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+            {/* Mobile Menu Overlay */}
+            {mobileMenuOpen && (
+                <>
+                    <div onClick={() => setMobileMenuOpen(false)} style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1001
+                    }} />
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        width: '280px',
+                        backgroundColor: '#111827',
+                        zIndex: 1002,
+                        padding: '80px 20px 20px',
+                        overflowY: 'auto',
+                        boxShadow: '-5px 0 20px rgba(0,0,0,0.3)'
+                    }}>
+                        <button onClick={() => setMobileMenuOpen(false)} style={{
+                            position: 'absolute',
+                            top: '15px',
+                            right: '15px',
+                            background: 'transparent',
+                            border: 'none',
+                            color: '#fff',
+                            fontSize: '24px',
+                            cursor: 'pointer'
+                        }}>✕</button>
+                        
+                        <Link to="/" style={mobileLinkStyle('/')} onClick={() => setMobileMenuOpen(false)}>Home</Link>
+                        <Link to="/about" style={mobileLinkStyle('/about')} onClick={() => setMobileMenuOpen(false)}>About</Link>
+                        <Link to="/contact" style={mobileLinkStyle('/contact')} onClick={() => setMobileMenuOpen(false)}>Contact</Link>
 
                         {isLoggedIn && (
                             <>
-                                <Link to="/bookings" style={{...navLinkStyle('/bookings'), display: 'block'}}>My Bookings</Link>
-
+                                <Link to="/bookings" style={mobileLinkStyle('/bookings')} onClick={() => setMobileMenuOpen(false)}>My Bookings</Link>
                                 {(isStudent || isStaff || isAdmin) && (
-                                    <Link to="/bookings/new" style={{...navLinkStyle('/bookings/new'), display: 'block'}}>New Booking</Link>
+                                    <Link to="/bookings/new" style={mobileLinkStyle('/bookings/new')} onClick={() => setMobileMenuOpen(false)}>New Booking</Link>
                                 )}
-
                                 {(isStudent || isStaff) && (
                                     <>
-                                        <Link to="/incidents" style={{...navLinkStyle('/incidents'), display: 'block'}}>My Tickets</Link>
-                                        <Link to="/incidents/new" style={{...navLinkStyle('/incidents/new'), display: 'block'}}>Report Incident</Link>
+                                        <Link to="/incidents" style={mobileLinkStyle('/incidents')} onClick={() => setMobileMenuOpen(false)}>My Tickets</Link>
+                                        <Link to="/incidents/new" style={mobileLinkStyle('/incidents/new')} onClick={() => setMobileMenuOpen(false)}>Report Incident</Link>
                                     </>
                                 )}
-
                                 {isAdmin && (
                                     <>
-                                        <Link to="/admin/tickets" style={{...navLinkStyle('/admin/tickets'), display: 'block'}}>Ticket Management</Link>
-                                        <Link to="/admin/users" style={{...navLinkStyle('/admin/users'), display: 'block'}}>User Management</Link>
-                                        <Link to="/admin/bookings" style={{...navLinkStyle('/admin/bookings'), display: 'block'}}>Booking Approvals</Link>
+                                        <Link to="/admin/tickets" style={mobileLinkStyle('/admin/tickets')} onClick={() => setMobileMenuOpen(false)}>Ticket Management</Link>
+                                        <Link to="/admin/users" style={mobileLinkStyle('/admin/users')} onClick={() => setMobileMenuOpen(false)}>User Management</Link>
+                                        <Link to="/admin/bookings" style={mobileLinkStyle('/admin/bookings')} onClick={() => setMobileMenuOpen(false)}>Booking Approvals</Link>
                                     </>
                                 )}
-
                                 {isTechnician && (
-                                    <Link to="/technician/tickets" style={{...navLinkStyle('/technician/tickets'), display: 'block'}}>
-                                        Technician Panel
-                                    </Link>
+                                    <Link to="/technician/tickets" style={mobileLinkStyle('/technician/tickets')} onClick={() => setMobileMenuOpen(false)}>Technician Panel</Link>
                                 )}
-
                                 {isStaff && (
-                                    <Link to="/staff/dashboard" style={{...navLinkStyle('/staff/dashboard'), display: 'block'}}>
-                                        Staff Area
-                                    </Link>
+                                    <Link to="/staff/dashboard" style={mobileLinkStyle('/staff/dashboard')} onClick={() => setMobileMenuOpen(false)}>Staff Area</Link>
                                 )}
-
-                                <Link to="/notifications" style={{...navLinkStyle('/notifications'), display: 'block'}}>
-                                    Notifications
-                                </Link>
+                                <Link to="/notifications" style={mobileLinkStyle('/notifications')} onClick={() => setMobileMenuOpen(false)}>Notifications</Link>
                             </>
                         )}
                     </div>
-                )}
-            </nav>
-        </div>
+                </>
+            )}
+
+            <style>{`
+                @media (max-width: 1024px) {
+                    .desktop-nav {
+                        display: none !important;
+                    }
+                    .mobile-btn {
+                        display: flex !important;
+                    }
+                }
+                @media (min-width: 1025px) {
+                    .desktop-nav {
+                        display: flex !important;
+                    }
+                    .mobile-btn {
+                        display: none !important;
+                    }
+                }
+            `}</style>
+        </>
     );
 }
 

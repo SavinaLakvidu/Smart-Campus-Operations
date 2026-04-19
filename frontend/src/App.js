@@ -20,6 +20,8 @@ import TechnicianTicketUpdatesPage from './pages/TechnicianTicketUpdatesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ResourceCataloguePage from './pages/ResourceCataloguePage';
+import AdminResourcesPage from './pages/AdminResourcesPage';
+
 
 // Components
 import Navbar from './components/navbar';
@@ -155,6 +157,15 @@ function AppContent() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              
+              <Route
+                path="/admin/resources"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <AdminResourcesPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </div>
