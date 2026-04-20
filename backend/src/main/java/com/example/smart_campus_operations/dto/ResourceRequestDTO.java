@@ -4,6 +4,7 @@ import com.example.smart_campus_operations.entity.enums.ResourceStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import com.example.smart_campus_operations.entity.enums.ResourceStatus;
 
 public class ResourceRequestDTO {
 

@@ -4,6 +4,8 @@ import com.example.smart_campus_operations.entity.enums.ResourceStatus;
 
 import java.time.LocalDateTime;
 
+import com.example.smart_campus_operations.entity.enums.ResourceStatus;
+
 public class ResourceResponseDTO {
 
     private Integer resourceId;
