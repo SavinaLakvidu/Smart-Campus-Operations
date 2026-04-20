@@ -3,17 +3,14 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import BookingListPage from './pages/BookingListPage.js';
-import CreateBookingPage from './pages/CreateBookingPage.js';
-import AdminBookingsPage from './pages/AdminBookingPage.js';
-import AdminUsersPage from './pages/AdminUsersPage.js';
-import NotificationsPage from './pages/NotificationsPage.js';
+// Pages
 import HomePage from './pages/HomePage';
-import Navbar from './components/navbar.js';
-import Footer from './components/Footer.js';
+import BookingListPage from './pages/BookingListPage';
+import CreateBookingPage from './pages/CreateBookingPage';
+import AdminBookingsPage from './pages/AdminBookingPage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import NotificationsPage from './pages/NotificationsPage';
 import LoginPage from './pages/LoginPage';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
 import CreateIncidentPage from './pages/CreateIncidentPage';
 import EditIncidentPage from './pages/EditIncidentPage';
 import IncidentMyTicketsPage from './pages/IncidentMyTicketsPage';
@@ -22,6 +19,17 @@ import AdminTicketManagementPage from './pages/AdminTicketManagementPage';
 import TechnicianTicketUpdatesPage from './pages/TechnicianTicketUpdatesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import ResourceCataloguePage from './pages/ResourceCataloguePage';
+import AdminResourcesPage from './pages/AdminResourcesPage';
+
+
+// Components
+import Navbar from './components/navbar';
+import Footer from './components/Footer';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Context
+import { AuthProvider } from './context/AuthContext';
 
 function AppContent() {
   const location = useLocation();
@@ -43,6 +51,9 @@ function AppContent() {
           <div className="container pt-4">
             <Routes>
               <Route path="/" element={<HomePage />} />
+
+              {/* Resource Catalogue */}
+              <Route path="/resources" element={<ResourceCataloguePage />} />
 
               <Route
                 path="/bookings"
@@ -146,6 +157,15 @@ function AppContent() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              
+              <Route
+                path="/admin/resources"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <AdminResourcesPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </div>
