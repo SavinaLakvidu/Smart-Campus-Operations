@@ -29,7 +29,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/error", "/login/**", "/oauth2/**").permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/me", "/api/auth/logout").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/resources/**").permitAll()
+
+                        // Resource API rules
+                        .requestMatchers(HttpMethod.GET, "/api/resources/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/resources/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/resources/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/resources/**").hasRole("ADMIN")
+
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/tickets/**").authenticated()
                         .requestMatchers("/api/v1/notifications/**").authenticated()
