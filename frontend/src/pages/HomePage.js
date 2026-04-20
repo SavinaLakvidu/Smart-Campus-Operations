@@ -53,7 +53,7 @@ function HomePage() {
             setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
         }, 6000);
         return () => clearInterval(interval);
-    }, []);
+    }, [carouselSlides.length]);
 
     const features = [
         {
@@ -62,7 +62,15 @@ function HomePage() {
             description: 'Browse lecture halls, labs, meeting rooms, and campus facilities in one place.',
             link: '/resources',
             linkText: 'Browse Resources',
-            available: false
+            available: true
+        },
+        {
+            icon: '🗂️',
+            title: 'Resource Management',
+            description: 'Admins can add, update, and remove lecture halls, labs, rooms, and equipment from the system.',
+            link: '/admin/resources',
+            linkText: 'Manage Resources',
+            available: isAdmin
         },
         {
             icon: '📅',
@@ -143,6 +151,21 @@ function HomePage() {
         }
     ];
 
+    // Gradient heading style with animation
+    const gradientHeadingStyle = {
+        fontSize: '3rem',
+        lineHeight: '1.2',
+        fontWeight: '800',
+        marginBottom: '20px',
+        letterSpacing: '-0.02em',
+        animation: 'gradientFade 4s ease-in-out infinite',
+        background: 'linear-gradient(135deg, #111827, #1e293b, #1d4ed8, #10b981, #111827)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        backgroundSize: '300% 300%'
+    };
+
     if (loading) {
         return (
             <div style={styles.loadingContainer}>
@@ -157,7 +180,7 @@ function HomePage() {
             {/* Hero Section */}
             <div style={styles.heroWrapper}>
                 <div style={styles.heroContainer}>
-                    <div style={styles.heroInner}>
+                    <div style={styles.heroInner} className="hero-inner">
                         {/* Left Column */}
                         <div style={styles.heroLeft}>
                             {isLoggedIn ? (
@@ -165,7 +188,7 @@ function HomePage() {
                                     <div style={styles.welcomeBadge}>
                                         👋 Welcome back, {user?.username}
                                     </div>
-                                    <h1 style={styles.heroTitle}>
+                                    <h1 style={gradientHeadingStyle}>
                                         Campus services
                                         <br />
                                         made simple
@@ -175,11 +198,22 @@ function HomePage() {
                                         and handle campus workflows from one modern platform.
                                     </p>
                                     <div style={styles.buttonGroup}>
+                                        <Link to="/resources" style={styles.secondaryButton}>
+                                            Browse Resources
+                                        </Link>
+
                                         {(isStudent || isStaff || isAdmin) && (
                                             <Link to="/bookings/new" style={styles.primaryButton}>
                                                 Book a Resource
                                             </Link>
                                         )}
+
+                                        {isAdmin && (
+                                            <Link to="/admin/resources" style={styles.secondaryButton}>
+                                                Manage Resources
+                                            </Link>
+                                        )}
+
                                         <Link to="/bookings" style={styles.secondaryButton}>
                                             View My Bookings
                                         </Link>
@@ -190,7 +224,7 @@ function HomePage() {
                                     <div style={styles.welcomeBadge}>
                                         ✨ Smart Campus, Better Workflow
                                     </div>
-                                    <h1 style={styles.heroTitle}>
+                                    <h1 style={gradientHeadingStyle}>
                                         Your digital
                                         <br />
                                         campus operations hub
@@ -199,16 +233,21 @@ function HomePage() {
                                         Book facilities, report campus issues, manage workflows, and stay
                                         informed with a smooth modern experience.
                                     </p>
-                                    <Link to="/login" style={styles.primaryButton}>
-                                        Get Started
-                                    </Link>
+                                    <div style={styles.buttonGroup}>
+                                        <Link to="/resources" style={styles.secondaryButton}>
+                                            Browse Resources
+                                        </Link>
+                                        <Link to="/login" style={styles.primaryButton}>
+                                            Get Started
+                                        </Link>
+                                    </div>
                                 </>
                             )}
                         </div>
 
                         {/* Right Column - Carousel */}
                         <div style={styles.heroRight}>
-                            <div style={styles.carouselWrapper}>
+                            <div style={styles.carouselWrapper} className="carousel-wrapper">
                                 {carouselSlides.map((slide, index) => (
                                     <div
                                         key={index}
@@ -279,7 +318,7 @@ function HomePage() {
 
                     <div style={styles.featuresGrid}>
                         {features.map((feature, index) => (
-                            <div key={index} style={styles.featureCard}>
+                            <div key={index} style={styles.featureCard} className="feature-card">
                                 <div style={styles.featureIcon}>{feature.icon}</div>
                                 <h3 style={styles.featureTitle}>{feature.title}</h3>
                                 <p style={styles.featureDescription}>{feature.description}</p>
@@ -310,7 +349,7 @@ function HomePage() {
                     </div>
                     <div style={styles.testimonialsGrid}>
                         {testimonials.map((testimonial, index) => (
-                            <div key={index} style={styles.testimonialCard}>
+                            <div key={index} style={styles.testimonialCard} className="testimonial-card">
                                 <div style={styles.quoteIcon}>“</div>
                                 <p style={styles.testimonialText}>{testimonial.text}</p>
                                 <div style={styles.testimonialDivider}></div>
@@ -350,22 +389,37 @@ function HomePage() {
                     100% { transform: rotate(360deg); }
                 }
                 
+                @keyframes gradientFade {
+                    0% {
+                        background-position: 0% 50%;
+                    }
+                    25% {
+                        background-position: 50% 50%;
+                    }
+                    50% {
+                        background-position: 100% 50%;
+                    }
+                    75% {
+                        background-position: 50% 50%;
+                    }
+                    100% {
+                        background-position: 0% 50%;
+                    }
+                }
+
                 .feature-card:hover {
                     transform: translateY(-4px);
                     box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
                 }
-                
+
                 .testimonial-card:hover {
                     transform: translateY(-4px);
                     box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
                 }
-                
+
                 @media (max-width: 768px) {
                     .hero-inner {
                         flex-direction: column !important;
-                    }
-                    .hero-left, .hero-right {
-                        width: 100% !important;
                     }
                     .carousel-wrapper {
                         margin-top: 30px;
@@ -408,7 +462,7 @@ const styles = {
     },
 
     heroWrapper: {
-        padding: '80px 20px',
+        padding: '100px 20px',
         background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)'
     },
 
@@ -448,15 +502,6 @@ const styles = {
         color: '#111827',
         marginBottom: '24px',
         fontWeight: '500'
-    },
-
-    heroTitle: {
-        fontSize: '3rem',
-        lineHeight: '1.2',
-        fontWeight: '800',
-        marginBottom: '20px',
-        letterSpacing: '-0.02em',
-        color: '#111827'
     },
 
     heroDescription: {
