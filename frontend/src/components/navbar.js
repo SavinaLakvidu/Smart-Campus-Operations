@@ -164,7 +164,7 @@ function Navbar() {
                                         )}
 
                                         {isTechnician && !isAdmin && (
-                                            <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Tickets</Link>
+                                            <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Ticket Updates</Link>
                                         )}
                                     </>
                                 )}
@@ -244,10 +244,6 @@ function Navbar() {
                                             </div>
                                         )}
                                     </div>
-                                )}
-
-                                {isLoggedIn && !isAdmin && isTechnician && (
-                                    <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Panel</Link>
                                 )}
 
                                 {isLoggedIn && !isAdmin && isStaff && (
@@ -458,7 +454,7 @@ function Navbar() {
                                     </>
                                 )}
                                 {isTechnician && (
-                                    <Link to="/technician/tickets" style={mobileLinkStyle('/technician/tickets')} onClick={() => setMobileMenuOpen(false)}>Technician Panel</Link>
+                                    <Link to="/technician/tickets" style={mobileLinkStyle('/technician/tickets')} onClick={() => setMobileMenuOpen(false)}>Ticket Updates</Link>
                                 )}
                                 {isStaff && (
                                     <Link to="/staff/dashboard" style={mobileLinkStyle('/staff/dashboard')} onClick={() => setMobileMenuOpen(false)}>Staff Area</Link>
