@@ -420,14 +420,12 @@ function Navbar() {
                                 {(isStudent || isStaff || isAdmin) && (
                                     <Link to="/bookings/new" style={mobileLinkStyle('/bookings/new')} onClick={() => setMobileMenuOpen(false)}>New Booking</Link>
                                 )}
-
                                 {(isStudent || isStaff) && (
                                     <>
                                         <Link to="/incidents" style={mobileLinkStyle('/incidents')} onClick={() => setMobileMenuOpen(false)}>My Tickets</Link>
                                         <Link to="/incidents/new" style={mobileLinkStyle('/incidents/new')} onClick={() => setMobileMenuOpen(false)}>Report Incident</Link>
                                     </>
                                 )}
-
                                 {isAdmin && (
                                     <>
                                         {/* ✅ Your admin module link */}
@@ -440,11 +438,9 @@ function Navbar() {
                                         <Link to="/admin/bookings" style={mobileLinkStyle('/admin/bookings')} onClick={() => setMobileMenuOpen(false)}>Booking Approvals</Link>
                                     </>
                                 )}
-
                                 {isTechnician && (
                                     <Link to="/technician/tickets" style={mobileLinkStyle('/technician/tickets')} onClick={() => setMobileMenuOpen(false)}>Technician Panel</Link>
                                 )}
-
                                 {isStaff && (
                                     <Link to="/staff/dashboard" style={mobileLinkStyle('/staff/dashboard')} onClick={() => setMobileMenuOpen(false)}>Staff Area</Link>
                                 )}
