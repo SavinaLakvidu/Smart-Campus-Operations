@@ -63,6 +63,11 @@
     gap: 14px;
 }
 
+.incident-grid > div,
+.incident-admin-grid > div {
+    min-width: 0;
+}
+
 .incident-grid-full {
     grid-column: 1 / -1;
 }
@@ -80,6 +85,8 @@
 .incident-select,
 .incident-textarea {
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     border: 1px solid #93c5c1;
     border-radius: 10px;
     padding: 10px 12px;
