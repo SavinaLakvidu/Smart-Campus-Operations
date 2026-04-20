@@ -54,6 +54,7 @@ function Navbar() {
     const isTechnician = user?.role === 'TECHNICIAN';
     const isStaff = user?.role === 'STAFF';
     const isStudent = user?.role === 'STUDENT';
+    const displayName = user?.username || (user?.email ? user.email.split('@')[0] : 'User');
 
     const isActive = (path) => location.pathname === path;
 
@@ -158,7 +159,7 @@ function Navbar() {
                                         {!isAdmin && (isStudent || isStaff) && (
                                             <>
                                                 <Link to="/incidents" style={navLinkStyle('/incidents')}>My Tickets</Link>
-                                                <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report</Link>
+                                                <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
                                             </>
                                         )}
 
@@ -293,6 +294,24 @@ function Navbar() {
                                                 )}
                                             </div>
                                         </Link>
+
+                                        {!isStudent && (
+                                            <span style={{
+                                                background: '#1a1a1a',
+                                                color: '#e5e7eb',
+                                                fontSize: '0.76rem',
+                                                fontWeight: '600',
+                                                padding: '5px 11px',
+                                                borderRadius: '20px',
+                                                border: '1px solid rgba(255,255,255,0.15)',
+                                                maxWidth: '140px',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap'
+                                            }} title={displayName}>
+                                                {displayName}
+                                            </span>
+                                        )}
 
                                         <span style={{
                                             background: '#1a1a1a',
