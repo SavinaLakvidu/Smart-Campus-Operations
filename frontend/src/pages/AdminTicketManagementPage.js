@@ -380,7 +380,7 @@ function AdminTicketManagementPage() {
         });
 
         return { total, slices };
-    }, [analytics.categoryChart]);
+    }, [analytics.categoryChart, categorySliceColors]);
 
     const downloadAnalyticsPdf = () => {
         const report = {
