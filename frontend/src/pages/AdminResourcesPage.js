@@ -101,78 +101,99 @@ const AdminResourcesPage = () => {
     }
   };
 
-  return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", padding: "30px" }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        <h1 style={{ marginBottom: "20px", color: "#1e293b" }}>
-          🛠 Admin Resource Management
-        </h1>
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "AVAILABLE":
+        return <span style={badgeGreen}>🟢 Available</span>;
+      case "BOOKED":
+        return <span style={badgeRed}>🔴 Booked</span>;
+      case "UNDER_MAINTENANCE":
+        return <span style={badgeYellow}>🟡 Under Maintenance</span>;
+      default:
+        return <span style={badgeDefault}>{status}</span>;
+    }
+  };
 
+  const getTypeBadgeStyle = (type) => {
+    return {
+      backgroundColor: "#eff6ff",
+      color: "#1d4ed8",
+      padding: "6px 12px",
+      borderRadius: "999px",
+      fontWeight: "600",
+      fontSize: "12px",
+      display: "inline-block"
+    };
+  };
+
+  return (
+    <div style={styles.page}>
+      <div style={styles.wrapper}>
+        {/* Hero Header */}
+        <div style={styles.heroCard}>
+          <div>
+            <div style={styles.smallLabel}>Admin Control</div>
+            <h1 style={styles.pageTitle}>Resource Management</h1>
+            <p style={styles.pageSubtitle}>
+              Create, update, and manage campus facilities and assets with a clean and organized admin workspace.
+            </p>
+          </div>
+
+          <div style={styles.heroStats}>
+            <div style={styles.statCard}>
+              <div style={styles.statNumber}>{resources.length}</div>
+              <div style={styles.statLabel}>Total Resources</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Message */}
         {message && (
-          <div
-            style={{
-              background: "#dbeafe",
-              color: "#1e3a8a",
-              padding: "12px 16px",
-              borderRadius: "10px",
-              marginBottom: "20px"
-            }}
-          >
+          <div style={styles.messageStyle}>
             {message}
           </div>
         )}
 
-        {/* Form */}
-        <div
-          style={{
-            background: "white",
-            padding: "25px",
-            borderRadius: "16px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-            marginBottom: "30px"
-          }}
-        >
-          <h3 style={{ marginBottom: "20px" }}>
-            {editingId ? "Edit Resource" : "Add New Resource"}
-          </h3>
+        {/* Form Card */}
+        <div style={styles.formCard}>
+          <div style={styles.formHeader}>
+            <div>
+              <h3 style={styles.formTitle}>
+                {editingId ? "Edit Resource" : "Add New Resource"}
+              </h3>
+              <p style={styles.formSubtitle}>
+                Fill in the resource details and save changes
+              </p>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit}>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: "15px",
-                marginBottom: "20px"
-              }}
-            >
+            <div style={styles.gridStyle}>
               <input
-                type="text"
                 name="resourceName"
                 placeholder="Resource Name"
                 value={formData.resourceName}
                 onChange={handleChange}
                 required
-                style={inputStyle}
+                style={styles.inputStyle}
               />
 
               <input
-                type="text"
                 name="resourceType"
                 placeholder="Resource Type"
                 value={formData.resourceType}
                 onChange={handleChange}
                 required
-                style={inputStyle}
+                style={styles.inputStyle}
               />
 
               <input
-                type="text"
                 name="location"
                 placeholder="Location"
                 value={formData.location}
                 onChange={handleChange}
                 required
-                style={inputStyle}
+                style={styles.inputStyle}
               />
 
               <input
@@ -182,153 +203,460 @@ const AdminResourcesPage = () => {
                 value={formData.capacity}
                 onChange={handleChange}
                 required
-                style={inputStyle}
+                style={styles.inputStyle}
               />
 
               <select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                style={inputStyle}
+                style={styles.inputStyle}
               >
                 <option value="AVAILABLE">AVAILABLE</option>
-                <option value="UNAVAILABLE">UNAVAILABLE</option>
-                <option value="MAINTENANCE">MAINTENANCE</option>
+                <option value="BOOKED">BOOKED</option>
+                <option value="UNDER_MAINTENANCE">UNDER_MAINTENANCE</option>
               </select>
             </div>
 
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button type="submit" style={saveButtonStyle}>
+            <div style={styles.buttonRow}>
+              <button type="submit" style={styles.saveButtonStyle}>
                 {editingId ? "Update Resource" : "Add Resource"}
               </button>
 
-              <button type="button" onClick={clearForm} style={resetButtonStyle}>
+              <button type="button" onClick={clearForm} style={styles.resetButtonStyle}>
                 Clear
               </button>
             </div>
           </form>
         </div>
 
-        {/* Table */}
-        <div
-          style={{
-            background: "white",
-            padding: "20px",
-            borderRadius: "16px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-            overflowX: "auto"
-          }}
-        >
-          <h3 style={{ marginBottom: "20px" }}>All Resources</h3>
+        {/* Table Card */}
+        <div style={styles.tableCard}>
+          <div style={styles.tableHeader}>
+            <div>
+              <h3 style={styles.tableTitle}>All Resources</h3>
+              <p style={styles.tableSubtitle}>
+                View all resources currently available in the system
+              </p>
+            </div>
+          </div>
 
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ background: "#f1f5f9" }}>
-                <th style={thStyle}>ID</th>
-                <th style={thStyle}>Name</th>
-                <th style={thStyle}>Type</th>
-                <th style={thStyle}>Location</th>
-                <th style={thStyle}>Capacity</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {resources.length > 0 ? (
-                resources.map((resource) => (
-                  <tr key={resource.resourceId}>
-                    <td style={tdStyle}>{resource.resourceId}</td>
-                    <td style={tdStyle}>{resource.resourceName}</td>
-                    <td style={tdStyle}>{resource.resourceType}</td>
-                    <td style={tdStyle}>{resource.location}</td>
-                    <td style={tdStyle}>{resource.capacity}</td>
-                    <td style={tdStyle}>{resource.status}</td>
-                    <td style={tdStyle}>
-                      <button
-                        onClick={() => handleEdit(resource)}
-                        style={editButtonStyle}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(resource.resourceId)}
-                        style={deleteButtonStyle}
-                      >
-                        Delete
-                      </button>
+          <div style={styles.tableWrap}>
+            <table style={styles.table}>
+              <thead>
+                <tr style={styles.tableHeadRow}>
+                  <th style={styles.th}>ID</th>
+                  <th style={styles.th}>Name</th>
+                  <th style={styles.th}>Type</th>
+                  <th style={styles.th}>Location</th>
+                  <th style={styles.th}>Capacity</th>
+                  <th style={styles.th}>Status</th>
+                  <th style={styles.th}>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {resources.length > 0 ? (
+                  resources.map((r, index) => (
+                    <tr
+                      key={r.resourceId}
+                      style={{
+                        ...styles.tr,
+                        backgroundColor: index % 2 === 0 ? "#ffffff" : "#fbfdff"
+                      }}
+                    >
+                      <td style={styles.tdId}>
+                        <span style={styles.idBadge}>{r.resourceId}</span>
+                      </td>
+
+                      <td style={styles.tdName}>
+                        <div style={styles.resourceName}>{r.resourceName}</div>
+                      </td>
+
+                      <td style={styles.td}>
+                        <span style={getTypeBadgeStyle(r.resourceType)}>
+                          {r.resourceType}
+                        </span>
+                      </td>
+
+                      <td style={styles.td}>{r.location}</td>
+
+                      <td style={styles.td}>
+                        <span style={styles.capacityText}>{r.capacity}</span>
+                      </td>
+
+                      <td style={styles.td}>
+                        {getStatusBadge(r.status)}
+                      </td>
+
+                      <td style={styles.td}>
+                        <div style={styles.actionRow}>
+                          <button
+                            onClick={() => handleEdit(r)}
+                            style={styles.editButtonStyle}
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(r.resourceId)}
+                            style={styles.deleteButtonStyle}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" style={styles.emptyCell}>
+                      No resources available
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
-                    No resources available
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-const inputStyle = {
-  padding: "12px",
-  borderRadius: "10px",
-  border: "1px solid #cbd5e1",
-  fontSize: "14px"
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%)",
+    padding: "32px 20px 60px"
+  },
+
+  wrapper: {
+    maxWidth: "1280px",
+    margin: "0 auto"
+  },
+
+  heroCard: {
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fbff 100%)",
+    borderRadius: "24px",
+    padding: "28px 30px",
+    boxShadow: "0 12px 30px rgba(15, 23, 42, 0.08)",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "20px",
+    flexWrap: "wrap",
+    marginBottom: "24px",
+    marginTop:"100px",
+    border: "1px solid #e5e7eb"
+  },
+
+  smallLabel: {
+    fontSize: "13px",
+    fontWeight: "700",
+    color: "#2563eb",
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
+    marginBottom: "8px"
+  },
+
+  pageTitle: {
+    margin: 0,
+    fontSize: "44px",
+    fontWeight: "800",
+    color: "#0f172a",
+    lineHeight: "1.1"
+  },
+
+  pageSubtitle: {
+    marginTop: "12px",
+    marginBottom: 0,
+    color: "#64748b",
+    fontSize: "16px",
+    lineHeight: "1.6",
+    maxWidth: "760px"
+  },
+
+  heroStats: {
+    display: "flex",
+    gap: "16px"
+  },
+
+  statCard: {
+    minWidth: "160px",
+    background: "#ffffff",
+    border: "1px solid #e5e7eb",
+    borderRadius: "20px",
+    padding: "18px 22px",
+    textAlign: "center",
+    boxShadow: "0 6px 20px rgba(15, 23, 42, 0.05)"
+  },
+
+  statNumber: {
+    fontSize: "28px",
+    fontWeight: "800",
+    color: "#111827"
+  },
+
+  statLabel: {
+    marginTop: "4px",
+    fontSize: "13px",
+    color: "#64748b",
+    fontWeight: "600"
+  },
+
+  messageStyle: {
+    background: "#dbeafe",
+    color: "#1e3a8a",
+    padding: "14px 18px",
+    borderRadius: "14px",
+    marginBottom: "20px",
+    fontWeight: "600",
+    border: "1px solid #bfdbfe"
+  },
+
+  formCard: {
+    background: "#ffffff",
+    borderRadius: "22px",
+    padding: "24px",
+    boxShadow: "0 12px 30px rgba(15, 23, 42, 0.08)",
+    marginBottom: "24px",
+    border: "1px solid #e5e7eb"
+  },
+
+  formHeader: {
+    marginBottom: "18px"
+  },
+
+  formTitle: {
+    margin: 0,
+    fontSize: "22px",
+    fontWeight: "700",
+    color: "#0f172a"
+  },
+
+  formSubtitle: {
+    marginTop: "6px",
+    marginBottom: 0,
+    color: "#64748b",
+    fontSize: "14px"
+  },
+
+  gridStyle: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: "16px",
+    marginBottom: "18px"
+  },
+
+  inputStyle: {
+    padding: "14px 16px",
+    borderRadius: "14px",
+    border: "1px solid #cbd5e1",
+    fontSize: "15px",
+    outline: "none",
+    width: "100%",
+    boxSizing: "border-box",
+    backgroundColor: "#f8fafc",
+    color: "#0f172a"
+  },
+
+  buttonRow: {
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap"
+  },
+
+  saveButtonStyle: {
+    background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+    color: "white",
+    border: "none",
+    padding: "12px 22px",
+    borderRadius: "14px",
+    fontWeight: "700",
+    cursor: "pointer",
+    boxShadow: "0 8px 20px rgba(37, 99, 235, 0.25)"
+  },
+
+  resetButtonStyle: {
+    background: "#e2e8f0",
+    color: "#1e293b",
+    border: "none",
+    padding: "12px 22px",
+    borderRadius: "14px",
+    fontWeight: "700",
+    cursor: "pointer"
+  },
+
+  tableCard: {
+    background: "#ffffff",
+    borderRadius: "22px",
+    boxShadow: "0 12px 30px rgba(15, 23, 42, 0.08)",
+    overflow: "hidden",
+    border: "1px solid #e5e7eb"
+  },
+
+  tableHeader: {
+    padding: "24px 24px 10px"
+  },
+
+  tableTitle: {
+    margin: 0,
+    fontSize: "22px",
+    fontWeight: "700",
+    color: "#0f172a"
+  },
+
+  tableSubtitle: {
+    marginTop: "6px",
+    marginBottom: 0,
+    color: "#64748b",
+    fontSize: "14px"
+  },
+
+  tableWrap: {
+    overflowX: "auto"
+  },
+
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    minWidth: "1050px"
+  },
+
+  tableHeadRow: {
+    background: "#f8fafc"
+  },
+
+  th: {
+    padding: "18px 20px",
+    textAlign: "left",
+    borderBottom: "1px solid #e5e7eb",
+    color: "#475569",
+    fontSize: "14px",
+    fontWeight: "800",
+    letterSpacing: "0.02em"
+  },
+
+  tr: {
+    transition: "background-color 0.2s ease"
+  },
+
+  td: {
+    padding: "18px 20px",
+    borderBottom: "1px solid #edf2f7",
+    color: "#1e293b",
+    fontSize: "15px",
+    verticalAlign: "middle"
+  },
+
+  tdId: {
+    padding: "18px 20px",
+    borderBottom: "1px solid #edf2f7",
+    verticalAlign: "middle"
+  },
+
+  tdName: {
+    padding: "18px 20px",
+    borderBottom: "1px solid #edf2f7",
+    verticalAlign: "middle"
+  },
+
+  idBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "34px",
+    height: "34px",
+    borderRadius: "999px",
+    background: "#eef2ff",
+    color: "#1e3a8a",
+    fontWeight: "700",
+    fontSize: "14px"
+  },
+
+  resourceName: {
+    fontWeight: "700",
+    color: "#111827",
+    fontSize: "16px"
+  },
+
+  capacityText: {
+    fontWeight: "700",
+    color: "#0f172a"
+  },
+
+  actionRow: {
+    display: "flex",
+    gap: "10px",
+    flexWrap: "wrap"
+  },
+
+  editButtonStyle: {
+    background: "#b1e48f",
+    color: "#1e293b",
+    border: "none",
+    padding: "10px 14px",
+    borderRadius: "12px",
+    cursor: "pointer",
+    fontWeight: "700"
+  },
+
+  deleteButtonStyle: {
+    background: "#ef4444",
+    color: "white",
+    border: "none",
+    padding: "10px 14px",
+    borderRadius: "12px",
+    cursor: "pointer",
+    fontWeight: "700"
+  },
+
+  emptyCell: {
+    textAlign: "center",
+    padding: "32px",
+    color: "#64748b",
+    fontWeight: "600"
+  }
 };
 
-const saveButtonStyle = {
-  background: "#2563eb",
-  color: "white",
-  border: "none",
-  padding: "12px 18px",
-  borderRadius: "10px",
-  cursor: "pointer",
-  fontWeight: "600"
+const badgeGreen = {
+  background: "#dcfce7",
+  color: "#166534",
+  padding: "7px 14px",
+  borderRadius: "999px",
+  fontWeight: "600",
+  fontSize: "12px",
+  display: "inline-block"
 };
 
-const resetButtonStyle = {
-  background: "#e2e8f0",
-  color: "#1e293b",
-  border: "none",
-  padding: "12px 18px",
-  borderRadius: "10px",
-  cursor: "pointer",
-  fontWeight: "600"
+const badgeRed = {
+  background: "#fee2e2",
+  color: "#991b1b",
+  padding: "7px 14px",
+  borderRadius: "999px",
+  fontWeight: "600",
+  fontSize: "12px",
+  display: "inline-block"
 };
 
-const editButtonStyle = {
-  background: "#facc15",
-  color: "#1e293b",
-  border: "none",
-  padding: "8px 12px",
-  borderRadius: "8px",
-  cursor: "pointer",
-  marginRight: "8px"
+const badgeYellow = {
+  background: "#fef3c7",
+  color: "#92400e",
+  padding: "7px 14px",
+  borderRadius: "999px",
+  fontWeight: "600",
+  fontSize: "12px",
+  display: "inline-block"
 };
 
-const deleteButtonStyle = {
-  background: "#ef4444",
-  color: "white",
-  border: "none",
-  padding: "8px 12px",
-  borderRadius: "8px",
-  cursor: "pointer"
-};
-
-const thStyle = {
-  textAlign: "left",
-  padding: "12px",
-  borderBottom: "1px solid #cbd5e1"
-};
-
-const tdStyle = {
-  padding: "12px",
-  borderBottom: "1px solid #e2e8f0"
+const badgeDefault = {
+  background: "#e5e7eb",
+  color: "#374151",
+  padding: "7px 14px",
+  borderRadius: "999px",
+  fontSize: "12px",
+  display: "inline-block"
 };
 
 export default AdminResourcesPage;
