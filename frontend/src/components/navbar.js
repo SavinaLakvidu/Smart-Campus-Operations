@@ -54,6 +54,7 @@ function Navbar() {
     const isTechnician = user?.role === 'TECHNICIAN';
     const isStaff = user?.role === 'STAFF';
     const isStudent = user?.role === 'STUDENT';
+    const displayName = user?.username || (user?.email ? user.email.split('@')[0] : 'User');
 
     const isActive = (path) => location.pathname === path;
 
@@ -158,12 +159,12 @@ function Navbar() {
                                         {!isAdmin && (isStudent || isStaff) && (
                                             <>
                                                 <Link to="/incidents" style={navLinkStyle('/incidents')}>My Tickets</Link>
-                                                <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report</Link>
+                                                <Link to="/incidents/new" style={navLinkStyle('/incidents/new')}>Report Incident</Link>
                                             </>
                                         )}
 
                                         {isTechnician && !isAdmin && (
-                                            <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Tickets</Link>
+                                            <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Ticket Updates</Link>
                                         )}
                                     </>
                                 )}
@@ -245,10 +246,6 @@ function Navbar() {
                                     </div>
                                 )}
 
-                                {isLoggedIn && !isAdmin && isTechnician && (
-                                    <Link to="/technician/tickets" style={navLinkStyle('/technician/tickets')}>Panel</Link>
-                                )}
-
                                 {isLoggedIn && !isAdmin && isStaff && (
                                     <Link to="/staff/dashboard" style={navLinkStyle('/staff/dashboard')}>Staff Area</Link>
                                 )}
@@ -293,6 +290,24 @@ function Navbar() {
                                                 )}
                                             </div>
                                         </Link>
+
+                                        {!isStudent && (
+                                            <span style={{
+                                                background: '#1a1a1a',
+                                                color: '#e5e7eb',
+                                                fontSize: '0.76rem',
+                                                fontWeight: '600',
+                                                padding: '5px 11px',
+                                                borderRadius: '20px',
+                                                border: '1px solid rgba(255,255,255,0.15)',
+                                                maxWidth: '140px',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap'
+                                            }} title={displayName}>
+                                                {displayName}
+                                            </span>
+                                        )}
 
                                         <span style={{
                                             background: '#1a1a1a',
@@ -420,14 +435,12 @@ function Navbar() {
                                 {(isStudent || isStaff || isAdmin) && (
                                     <Link to="/bookings/new" style={mobileLinkStyle('/bookings/new')} onClick={() => setMobileMenuOpen(false)}>New Booking</Link>
                                 )}
-
                                 {(isStudent || isStaff) && (
                                     <>
                                         <Link to="/incidents" style={mobileLinkStyle('/incidents')} onClick={() => setMobileMenuOpen(false)}>My Tickets</Link>
                                         <Link to="/incidents/new" style={mobileLinkStyle('/incidents/new')} onClick={() => setMobileMenuOpen(false)}>Report Incident</Link>
                                     </>
                                 )}
-
                                 {isAdmin && (
                                     <>
                                         {/* ✅ Your admin module link */}
@@ -440,11 +453,9 @@ function Navbar() {
                                         <Link to="/admin/bookings" style={mobileLinkStyle('/admin/bookings')} onClick={() => setMobileMenuOpen(false)}>Booking Approvals</Link>
                                     </>
                                 )}
-
                                 {isTechnician && (
-                                    <Link to="/technician/tickets" style={mobileLinkStyle('/technician/tickets')} onClick={() => setMobileMenuOpen(false)}>Technician Panel</Link>
+                                    <Link to="/technician/tickets" style={mobileLinkStyle('/technician/tickets')} onClick={() => setMobileMenuOpen(false)}>Ticket Updates</Link>
                                 )}
-
                                 {isStaff && (
                                     <Link to="/staff/dashboard" style={mobileLinkStyle('/staff/dashboard')} onClick={() => setMobileMenuOpen(false)}>Staff Area</Link>
                                 )}
