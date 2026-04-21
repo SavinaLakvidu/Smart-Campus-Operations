@@ -270,6 +270,13 @@ function Navbar() {
                                                 >
                                                     Booking Approvals
                                                 </Link>
+                                                <Link
+                                                    to="/admin/user-summary"
+                                                    style={adminDropdownLinkStyle}
+                                                    onClick={() => setAdminDropdownOpen(false)}
+                                                    >
+                                                    User Overview
+                                                    </Link>
                                             </div>
                                         )}
                                     </div>
@@ -503,37 +510,10 @@ function Navbar() {
                                             Resource Management
                                         </Link>
 
-                                        <Link
-                                            to="/admin/resources/summary"
-                                            style={mobileLinkStyle('/admin/resources/summary')}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            📊 Resource Summary
-                                        </Link>
-
-                                        <Link
-                                            to="/admin/tickets"
-                                            style={mobileLinkStyle('/admin/tickets')}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            Ticket Management
-                                        </Link>
-
-                                        <Link
-                                            to="/admin/users"
-                                            style={mobileLinkStyle('/admin/users')}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            User Management
-                                        </Link>
-
-                                        <Link
-                                            to="/admin/bookings"
-                                            style={mobileLinkStyle('/admin/bookings')}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            Booking Approvals
-                                        </Link>
+                                        <Link to="/admin/tickets" style={mobileLinkStyle('/admin/tickets')} onClick={() => setMobileMenuOpen(false)}>Ticket Management</Link>
+                                        <Link to="/admin/users" style={mobileLinkStyle('/admin/users')} onClick={() => setMobileMenuOpen(false)}>User Management</Link>
+                                        <Link to="/admin/bookings" style={mobileLinkStyle('/admin/bookings')} onClick={() => setMobileMenuOpen(false)}>Booking Approvals</Link>
+                                        <Link to="/admin/user-summary" style={mobileLinkStyle('/admin/user-summary')} onClick={() => setMobileMenuOpen(false)}>User Overview</Link>
                                     </>
                                 )}
                                 {isTechnician && (

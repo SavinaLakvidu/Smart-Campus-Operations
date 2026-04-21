@@ -1,10 +1,5 @@
 package com.example.smart_campus_operations.entity.enums;
 
 public enum ResourceStatus {
-    AVAILABLE,
-    BOOKED,
-    UNDER_MAINTENANCE,
-    ACTIVE,
-    UNAVAILABLE,
-    MAINTENANCE
+    ACTIVE,AVAILABLE, BOOKED, UNDER_MAINTENANCE,UNAVAILABLE,MAINTENANCE
 }
