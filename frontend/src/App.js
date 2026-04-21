@@ -21,7 +21,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ResourceCataloguePage from './pages/ResourceCataloguePage';
 import AdminResourcesPage from './pages/AdminResourcesPage';
-
+import AdminResourceSummaryPage from './pages/AdminResourceSummaryPage';
 
 // Components
 import Navbar from './components/navbar';
@@ -163,6 +163,14 @@ function AppContent() {
                 element={
                   <ProtectedRoute allowedRoles={['ADMIN']}>
                     <AdminResourcesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/resources/summary"
+                element={
+                  <ProtectedRoute allowedRoles={["ADMIN"]}>
+                    <AdminResourceSummaryPage />
                   </ProtectedRoute>
                 }
               />
