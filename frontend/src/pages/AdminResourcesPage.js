@@ -10,6 +10,8 @@ const AdminResourcesPage = () => {
   const [resources, setResources] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     resourceName: "",
@@ -33,11 +35,66 @@ const AdminResourcesPage = () => {
     }
   };
 
+  const validateField = (name, value) => {
+    switch (name) {
+      case "resourceName":
+        if (!value.trim()) return "Resource name is required";
+        if (value.trim().length < 3) return "Resource name must be at least 3 characters";
+        if (!/^[A-Za-z0-9\s-]+$/.test(value)) {
+          return "Only letters, numbers, spaces and - are allowed";
+        }
+        return "";
+
+      case "resourceType":
+        if (!value.trim()) return "Resource type is required";
+        if (!["HALL", "LAB", "ROOM", "EQUIPMENT"].includes(value)) {
+          return "Please select a valid resource type";
+        }
+        return "";
+
+      case "location":
+        if (!value.trim()) return "Location is required";
+        if (value.trim().length < 3) return "Location must be at least 3 characters";
+        if (!/^[A-Za-z0-9\s\-/]+$/.test(value)) {
+          return "Only letters, numbers, spaces, - and / are allowed";
+        }
+        return "";
+
+      case "capacity":
+        if (value === "" || value === null) return "Capacity is required";
+        if (Number(value) <= 0) return "Capacity must be greater than 0";
+        return "";
+
+      default:
+        return "";
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      resourceName: validateField("resourceName", formData.resourceName),
+      resourceType: validateField("resourceType", formData.resourceType),
+      location: validateField("location", formData.location),
+      capacity: validateField("capacity", formData.capacity)
+    };
+
+    setErrors(newErrors);
+
+    return !Object.values(newErrors).some((error) => error);
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateField(name, value)
+    }));
   };
 
   const clearForm = () => {
@@ -48,11 +105,22 @@ const AdminResourcesPage = () => {
       capacity: "",
       status: "AVAILABLE"
     });
+    setErrors({});
     setEditingId(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (saving) return;
+
+    if (!validateForm()) {
+      setMessage("Please fix the validation errors before saving");
+      return;
+    }
+
+    setSaving(true);
+    setMessage("");
 
     const payload = {
       ...formData,
@@ -69,10 +137,12 @@ const AdminResourcesPage = () => {
       }
 
       clearForm();
-      fetchResources();
+      await fetchResources();
     } catch (error) {
       console.error("Save error:", error);
       setMessage("Failed to save resource");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -85,6 +155,8 @@ const AdminResourcesPage = () => {
       capacity: resource.capacity,
       status: resource.status
     });
+    setErrors({});
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id) => {
@@ -94,7 +166,7 @@ const AdminResourcesPage = () => {
     try {
       await deleteResource(id);
       setMessage("Resource deleted successfully");
-      fetchResources();
+      await fetchResources();
     } catch (error) {
       console.error("Delete error:", error);
       setMessage("Failed to delete resource");
@@ -114,7 +186,7 @@ const AdminResourcesPage = () => {
     }
   };
 
-  const getTypeBadgeStyle = (type) => {
+  const getTypeBadgeStyle = () => {
     return {
       backgroundColor: "#eff6ff",
       color: "#1d4ed8",
@@ -129,7 +201,6 @@ const AdminResourcesPage = () => {
   return (
     <div style={styles.page}>
       <div style={styles.wrapper}>
-        {/* Hero Header */}
         <div style={styles.heroCard}>
           <div>
             <div style={styles.smallLabel}>Admin Control</div>
@@ -147,14 +218,8 @@ const AdminResourcesPage = () => {
           </div>
         </div>
 
-        {/* Message */}
-        {message && (
-          <div style={styles.messageStyle}>
-            {message}
-          </div>
-        )}
+        {message && <div style={styles.messageStyle}>{message}</div>}
 
-        {/* Form Card */}
         <div style={styles.formCard}>
           <div style={styles.formHeader}>
             <div>
@@ -169,68 +234,118 @@ const AdminResourcesPage = () => {
 
           <form onSubmit={handleSubmit}>
             <div style={styles.gridStyle}>
-              <input
-                name="resourceName"
-                placeholder="Resource Name"
-                value={formData.resourceName}
-                onChange={handleChange}
-                required
-                style={styles.inputStyle}
-              />
+              <div>
+                <input
+                  name="resourceName"
+                  placeholder="Resource Name"
+                  value={formData.resourceName}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.inputStyle,
+                    borderColor: errors.resourceName ? "#ef4444" : "#cbd5e1"
+                  }}
+                />
+                {errors.resourceName && (
+                  <div style={styles.errorText}>{errors.resourceName}</div>
+                )}
+              </div>
 
-              <input
-                name="resourceType"
-                placeholder="Resource Type"
-                value={formData.resourceType}
-                onChange={handleChange}
-                required
-                style={styles.inputStyle}
-              />
+              <div>
+                <select
+                  name="resourceType"
+                  value={formData.resourceType}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.inputStyle,
+                    borderColor: errors.resourceType ? "#ef4444" : "#cbd5e1"
+                  }}
+                >
+                  <option value="">Select Resource Type</option>
+                  <option value="HALL">HALL</option>
+                  <option value="LAB">LAB</option>
+                  <option value="ROOM">ROOM</option>
+                  <option value="EQUIPMENT">EQUIPMENT</option>
+                </select>
+                {errors.resourceType && (
+                  <div style={styles.errorText}>{errors.resourceType}</div>
+                )}
+              </div>
 
-              <input
-                name="location"
-                placeholder="Location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-                style={styles.inputStyle}
-              />
+              <div>
+                <input
+                  name="location"
+                  placeholder="Location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.inputStyle,
+                    borderColor: errors.location ? "#ef4444" : "#cbd5e1"
+                  }}
+                />
+                {errors.location && (
+                  <div style={styles.errorText}>{errors.location}</div>
+                )}
+              </div>
 
-              <input
-                type="number"
-                name="capacity"
-                placeholder="Capacity"
-                value={formData.capacity}
-                onChange={handleChange}
-                required
-                style={styles.inputStyle}
-              />
+              <div>
+                <input
+                  type="number"
+                  name="capacity"
+                  placeholder="Capacity"
+                  value={formData.capacity}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.inputStyle,
+                    borderColor: errors.capacity ? "#ef4444" : "#cbd5e1"
+                  }}
+                />
+                {errors.capacity && (
+                  <div style={styles.errorText}>{errors.capacity}</div>
+                )}
+              </div>
 
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                style={styles.inputStyle}
-              >
-                <option value="AVAILABLE">AVAILABLE</option>
-                <option value="BOOKED">BOOKED</option>
-                <option value="UNDER_MAINTENANCE">UNDER_MAINTENANCE</option>
-              </select>
+              <div>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  style={styles.inputStyle}
+                >
+                  <option value="AVAILABLE">AVAILABLE</option>
+                  <option value="BOOKED">BOOKED</option>
+                  <option value="UNDER_MAINTENANCE">UNDER_MAINTENANCE</option>
+                </select>
+              </div>
             </div>
 
             <div style={styles.buttonRow}>
-              <button type="submit" style={styles.saveButtonStyle}>
-                {editingId ? "Update Resource" : "Add Resource"}
+              <button
+                type="submit"
+                disabled={saving}
+                style={{
+                  ...styles.saveButtonStyle,
+                  opacity: saving ? 0.6 : 1,
+                  cursor: saving ? "not-allowed" : "pointer"
+                }}
+              >
+                {saving
+                  ? "Saving..."
+                  : editingId
+                  ? "Update Resource"
+                  : "Add Resource"}
               </button>
 
-              <button type="button" onClick={clearForm} style={styles.resetButtonStyle}>
+              <button
+                type="button"
+                onClick={clearForm}
+                style={styles.resetButtonStyle}
+              >
                 Clear
               </button>
             </div>
           </form>
         </div>
 
-        {/* Table Card */}
         <div style={styles.tableCard}>
           <div style={styles.tableHeader}>
             <div>
@@ -285,13 +400,12 @@ const AdminResourcesPage = () => {
                         <span style={styles.capacityText}>{r.capacity}</span>
                       </td>
 
-                      <td style={styles.td}>
-                        {getStatusBadge(r.status)}
-                      </td>
+                      <td style={styles.td}>{getStatusBadge(r.status)}</td>
 
                       <td style={styles.td}>
                         <div style={styles.actionRow}>
                           <button
+                            type="button"
                             onClick={() => handleEdit(r)}
                             style={styles.editButtonStyle}
                           >
@@ -299,6 +413,7 @@ const AdminResourcesPage = () => {
                           </button>
 
                           <button
+                            type="button"
                             onClick={() => handleDelete(r.resourceId)}
                             style={styles.deleteButtonStyle}
                           >
@@ -347,7 +462,7 @@ const styles = {
     gap: "20px",
     flexWrap: "wrap",
     marginBottom: "24px",
-    marginTop:"100px",
+    marginTop: "100px",
     border: "1px solid #e5e7eb"
   },
 
@@ -461,6 +576,13 @@ const styles = {
     color: "#0f172a"
   },
 
+  errorText: {
+    marginTop: "6px",
+    fontSize: "12px",
+    color: "#dc2626",
+    fontWeight: "600"
+  },
+
   buttonRow: {
     display: "flex",
     gap: "12px",
@@ -474,7 +596,6 @@ const styles = {
     padding: "12px 22px",
     borderRadius: "14px",
     fontWeight: "700",
-    cursor: "pointer",
     boxShadow: "0 8px 20px rgba(37, 99, 235, 0.25)"
   },
 

@@ -44,6 +44,7 @@ function Navbar() {
             }
             setLastScrollY(currentScrollY);
         };
+
         window.addEventListener('scroll', controlNavbar);
         return () => window.removeEventListener('scroll', controlNavbar);
     }, [lastScrollY]);
@@ -90,62 +91,74 @@ function Navbar() {
 
     return (
         <>
-            <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 1000,
-                backgroundColor: '#f9f9f9',
-                padding: '12px 20px',
-                transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
-                transition: 'transform 0.3s ease',
-                boxShadow: isVisible ? '0 2px 10px rgba(0,0,0,0.05)' : 'none'
-            }}>
-                <nav style={{
-                    maxWidth: '1400px',
-                    margin: '0 auto',
-                    background: 'linear-gradient(135deg, #000000, #1a1a1a)',
-                    borderRadius: '50px',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-                    overflow: 'visible'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0 20px',
-                        minHeight: '65px'
-                    }}>
+            <div
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    backgroundColor: '#f9f9f9',
+                    padding: '12px 20px',
+                    transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
+                    transition: 'transform 0.3s ease',
+                    boxShadow: isVisible ? '0 2px 10px rgba(0,0,0,0.05)' : 'none'
+                }}
+            >
+                <nav
+                    style={{
+                        maxWidth: '1400px',
+                        margin: '0 auto',
+                        background: 'linear-gradient(135deg, #000000, #1a1a1a)',
+                        borderRadius: '50px',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                        overflow: 'visible'
+                    }}
+                >
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '0 20px',
+                            minHeight: '65px'
+                        }}
+                    >
                         {/* Logo */}
-                        <Link to="/" style={{
-                            textDecoration: 'none',
-                            fontWeight: '800',
-                            fontSize: '1.2rem',
-                            background: 'linear-gradient(135deg, #ffffff, #9ca3af)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text'
-                        }}>
+                        <Link
+                            to="/"
+                            style={{
+                                textDecoration: 'none',
+                                fontWeight: '800',
+                                fontSize: '1.2rem',
+                                background: 'linear-gradient(135deg, #ffffff, #9ca3af)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text'
+                            }}
+                        >
                             Zentrix Campus
                         </Link>
 
                         {/* Desktop Navigation */}
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '5px'
-                        }}>
-                            <div style={{
+                        <div
+                            style={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '5px'
-                            }} className="desktop-nav">
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '5px'
+                                }}
+                                className="desktop-nav"
+                            >
                                 <Link to="/" style={navLinkStyle('/')}>Home</Link>
                                 <Link to="/about" style={navLinkStyle('/about')}>About</Link>
                                 <Link to="/contact" style={navLinkStyle('/contact')}>Contact</Link>
-
-                                {/* ✅ Your public module link */}
                                 <Link to="/resources" style={navLinkStyle('/resources')}>Resources</Link>
 
                                 {isLoggedIn && (
@@ -153,7 +166,9 @@ function Navbar() {
                                         <Link to="/bookings" style={navLinkStyle('/bookings')}>Bookings</Link>
 
                                         {(isStudent || isStaff || isAdmin) && (
-                                            <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>New Booking</Link>
+                                            <Link to="/bookings/new" style={navLinkStyle('/bookings/new')}>
+                                                New Booking
+                                            </Link>
                                         )}
 
                                         {!isAdmin && (isStudent || isStaff) && (
@@ -191,31 +206,45 @@ function Navbar() {
                                         >
                                             Admin
                                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                                <path
+                                                    d="M3 4.5L6 7.5L9 4.5"
+                                                    stroke="currentColor"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                />
                                             </svg>
                                         </button>
 
                                         {adminDropdownOpen && (
-                                            <div style={{
-                                                position: 'absolute',
-                                                top: '100%',
-                                                right: 0,
-                                                background: '#1a1a1a',
-                                                border: '1px solid #374151',
-                                                borderRadius: '12px',
-                                                padding: '8px 0',
-                                                minWidth: '220px',
-                                                marginTop: '8px',
-                                                boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
-                                                zIndex: 100
-                                            }}>
-                                                {/* ✅ Your admin module link */}
+                                            <div
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '100%',
+                                                    right: 0,
+                                                    background: '#1a1a1a',
+                                                    border: '1px solid #374151',
+                                                    borderRadius: '12px',
+                                                    padding: '8px 0',
+                                                    minWidth: '220px',
+                                                    marginTop: '8px',
+                                                    boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+                                                    zIndex: 100
+                                                }}
+                                            >
                                                 <Link
                                                     to="/admin/resources"
                                                     style={adminDropdownLinkStyle}
                                                     onClick={() => setAdminDropdownOpen(false)}
                                                 >
                                                     Resource Management
+                                                </Link>
+
+                                                <Link
+                                                    to="/admin/resources/summary"
+                                                    style={adminDropdownLinkStyle}
+                                                    onClick={() => setAdminDropdownOpen(false)}
+                                                >
+                                                    📊 Resource Summary
                                                 </Link>
 
                                                 <Link
@@ -247,7 +276,9 @@ function Navbar() {
                                 )}
 
                                 {isLoggedIn && !isAdmin && isStaff && (
-                                    <Link to="/staff/dashboard" style={navLinkStyle('/staff/dashboard')}>Staff Area</Link>
+                                    <Link to="/staff/dashboard" style={navLinkStyle('/staff/dashboard')}>
+                                        Staff Area
+                                    </Link>
                                 )}
                             </div>
 
@@ -256,35 +287,49 @@ function Navbar() {
                                 {isLoggedIn ? (
                                     <>
                                         <Link to="/notifications" style={{ position: 'relative', textDecoration: 'none' }}>
-                                            <div style={{
-                                                width: '36px',
-                                                height: '36px',
-                                                borderRadius: '50%',
-                                                border: '1px solid rgba(255,255,255,0.2)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                background: '#1a1a1a'
-                                            }}>
+                                            <div
+                                                style={{
+                                                    width: '36px',
+                                                    height: '36px',
+                                                    borderRadius: '50%',
+                                                    border: '1px solid rgba(255,255,255,0.2)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    background: '#1a1a1a'
+                                                }}
+                                            >
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                                    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#d1d5db" strokeWidth="1.7" fill="none"/>
-                                                    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#d1d5db" strokeWidth="1.7" fill="none"/>
+                                                    <path
+                                                        d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
+                                                        stroke="#d1d5db"
+                                                        strokeWidth="1.7"
+                                                        fill="none"
+                                                    />
+                                                    <path
+                                                        d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"
+                                                        stroke="#d1d5db"
+                                                        strokeWidth="1.7"
+                                                        fill="none"
+                                                    />
                                                 </svg>
 
                                                 {unreadCount > 0 && (
-                                                    <span style={{
-                                                        position: 'absolute',
-                                                        top: '-2px',
-                                                        right: '-2px',
-                                                        backgroundColor: '#ef4444',
-                                                        color: '#fff',
-                                                        fontSize: '9px',
-                                                        fontWeight: 'bold',
-                                                        padding: '2px 5px',
-                                                        borderRadius: '10px',
-                                                        minWidth: '16px',
-                                                        textAlign: 'center'
-                                                    }}>
+                                                    <span
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: '-2px',
+                                                            right: '-2px',
+                                                            backgroundColor: '#ef4444',
+                                                            color: '#fff',
+                                                            fontSize: '9px',
+                                                            fontWeight: 'bold',
+                                                            padding: '2px 5px',
+                                                            borderRadius: '10px',
+                                                            minWidth: '16px',
+                                                            textAlign: 'center'
+                                                        }}
+                                                    >
                                                         {unreadCount > 99 ? '99+' : unreadCount}
                                                     </span>
                                                 )}
@@ -338,15 +383,18 @@ function Navbar() {
                                         </button>
                                     </>
                                 ) : (
-                                    <Link to="/login" style={{
-                                        backgroundColor: '#fff',
-                                        color: '#111',
-                                        fontSize: '0.85rem',
-                                        fontWeight: '600',
-                                        padding: '8px 20px',
-                                        borderRadius: '20px',
-                                        textDecoration: 'none'
-                                    }}>
+                                    <Link
+                                        to="/login"
+                                        style={{
+                                            backgroundColor: '#fff',
+                                            color: '#111',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600',
+                                            padding: '8px 20px',
+                                            borderRadius: '20px',
+                                            textDecoration: 'none'
+                                        }}
+                                    >
                                         Login
                                     </Link>
                                 )}
@@ -366,7 +414,7 @@ function Navbar() {
                                     className="mobile-btn"
                                 >
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                        <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                                     </svg>
                                 </button>
                             </div>
@@ -391,18 +439,20 @@ function Navbar() {
                         }}
                     />
 
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        right: 0,
-                        bottom: 0,
-                        width: '280px',
-                        backgroundColor: '#111827',
-                        zIndex: 1002,
-                        padding: '80px 20px 20px',
-                        overflowY: 'auto',
-                        boxShadow: '-5px 0 20px rgba(0,0,0,0.3)'
-                    }}>
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            width: '280px',
+                            backgroundColor: '#111827',
+                            zIndex: 1002,
+                            padding: '80px 20px 20px',
+                            overflowY: 'auto',
+                            boxShadow: '-5px 0 20px rgba(0,0,0,0.3)'
+                        }}
+                    >
                         <button
                             onClick={() => setMobileMenuOpen(false)}
                             style={{
@@ -422,45 +472,90 @@ function Navbar() {
                         <Link to="/" style={mobileLinkStyle('/')} onClick={() => setMobileMenuOpen(false)}>Home</Link>
                         <Link to="/about" style={mobileLinkStyle('/about')} onClick={() => setMobileMenuOpen(false)}>About</Link>
                         <Link to="/contact" style={mobileLinkStyle('/contact')} onClick={() => setMobileMenuOpen(false)}>Contact</Link>
-
-                        {/* ✅ Your public module link */}
-                        <Link to="/resources" style={mobileLinkStyle('/resources')} onClick={() => setMobileMenuOpen(false)}>
-                            Resources
-                        </Link>
+                        <Link to="/resources" style={mobileLinkStyle('/resources')} onClick={() => setMobileMenuOpen(false)}>Resources</Link>
 
                         {isLoggedIn && (
                             <>
                                 <Link to="/bookings" style={mobileLinkStyle('/bookings')} onClick={() => setMobileMenuOpen(false)}>My Bookings</Link>
 
                                 {(isStudent || isStaff || isAdmin) && (
-                                    <Link to="/bookings/new" style={mobileLinkStyle('/bookings/new')} onClick={() => setMobileMenuOpen(false)}>New Booking</Link>
+                                    <Link to="/bookings/new" style={mobileLinkStyle('/bookings/new')} onClick={() => setMobileMenuOpen(false)}>
+                                        New Booking
+                                    </Link>
                                 )}
                                 {(isStudent || isStaff) && (
                                     <>
-                                        <Link to="/incidents" style={mobileLinkStyle('/incidents')} onClick={() => setMobileMenuOpen(false)}>My Tickets</Link>
-                                        <Link to="/incidents/new" style={mobileLinkStyle('/incidents/new')} onClick={() => setMobileMenuOpen(false)}>Report Incident</Link>
+                                        <Link to="/incidents" style={mobileLinkStyle('/incidents')} onClick={() => setMobileMenuOpen(false)}>
+                                            My Tickets
+                                        </Link>
+                                        <Link to="/incidents/new" style={mobileLinkStyle('/incidents/new')} onClick={() => setMobileMenuOpen(false)}>
+                                            Report Incident
+                                        </Link>
                                     </>
                                 )}
                                 {isAdmin && (
                                     <>
-                                        {/* ✅ Your admin module link */}
-                                        <Link to="/admin/resources" style={mobileLinkStyle('/admin/resources')} onClick={() => setMobileMenuOpen(false)}>
+                                        <Link
+                                            to="/admin/resources"
+                                            style={mobileLinkStyle('/admin/resources')}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
                                             Resource Management
                                         </Link>
 
-                                        <Link to="/admin/tickets" style={mobileLinkStyle('/admin/tickets')} onClick={() => setMobileMenuOpen(false)}>Ticket Management</Link>
-                                        <Link to="/admin/users" style={mobileLinkStyle('/admin/users')} onClick={() => setMobileMenuOpen(false)}>User Management</Link>
-                                        <Link to="/admin/bookings" style={mobileLinkStyle('/admin/bookings')} onClick={() => setMobileMenuOpen(false)}>Booking Approvals</Link>
+                                        <Link
+                                            to="/admin/resources/summary"
+                                            style={mobileLinkStyle('/admin/resources/summary')}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            📊 Resource Summary
+                                        </Link>
+
+                                        <Link
+                                            to="/admin/tickets"
+                                            style={mobileLinkStyle('/admin/tickets')}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            Ticket Management
+                                        </Link>
+
+                                        <Link
+                                            to="/admin/users"
+                                            style={mobileLinkStyle('/admin/users')}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            User Management
+                                        </Link>
+
+                                        <Link
+                                            to="/admin/bookings"
+                                            style={mobileLinkStyle('/admin/bookings')}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            Booking Approvals
+                                        </Link>
                                     </>
                                 )}
                                 {isTechnician && (
                                     <Link to="/technician/tickets" style={mobileLinkStyle('/technician/tickets')} onClick={() => setMobileMenuOpen(false)}>Ticket Updates</Link>
                                 )}
                                 {isStaff && (
-                                    <Link to="/staff/dashboard" style={mobileLinkStyle('/staff/dashboard')} onClick={() => setMobileMenuOpen(false)}>Staff Area</Link>
+                                    <Link
+                                        to="/staff/dashboard"
+                                        style={mobileLinkStyle('/staff/dashboard')}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        Staff Area
+                                    </Link>
                                 )}
 
-                                <Link to="/notifications" style={mobileLinkStyle('/notifications')} onClick={() => setMobileMenuOpen(false)}>Notifications</Link>
+                                <Link
+                                    to="/notifications"
+                                    style={mobileLinkStyle('/notifications')}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Notifications
+                                </Link>
                             </>
                         )}
                     </div>
