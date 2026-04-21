@@ -55,7 +55,7 @@ const AdminResourcesPage = () => {
       case "location":
         if (!value.trim()) return "Location is required";
         if (value.trim().length < 3) return "Location must be at least 3 characters";
-        if (!/^[A-Za-z0-9\s\-\/]+$/.test(value)) {
+        if (!/^[A-Za-z0-9\s\-/]+$/.test(value)) {
           return "Only letters, numbers, spaces, - and / are allowed";
         }
         return "";
