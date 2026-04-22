@@ -16,6 +16,7 @@ import com.example.smart_campus_operations.repository.BookingRepository;
 import com.example.smart_campus_operations.repository.ResourceRepository;
 import com.example.smart_campus_operations.repository.UserRepository;
 import com.example.smart_campus_operations.service.BookingService;
+import com.example.smart_campus_operations.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +47,9 @@ public class BookingServiceTest {
 
     @InjectMocks
     private BookingService bookingService;
+
+    @Mock
+    private NotificationService notificationService;
 
     private User testUser;
     private User testAdmin;

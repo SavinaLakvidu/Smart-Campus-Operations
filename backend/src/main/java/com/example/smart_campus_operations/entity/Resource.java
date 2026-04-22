@@ -3,12 +3,15 @@ package com.example.smart_campus_operations.entity;
 import com.example.smart_campus_operations.entity.enums.ResourceStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "resources")
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Resource {
 
