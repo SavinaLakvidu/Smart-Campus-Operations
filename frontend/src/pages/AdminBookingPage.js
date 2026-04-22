@@ -80,6 +80,205 @@ function AdminBookingsPage() {
         );
     }
 
+    const handleGeneratePDF = () => {
+        const printWindow = window.open('', '_blank');
+        const statusLabel = filterStatus === 'ALL' ? 'All Statuses' : filterStatus;
+        const generatedDate = new Date().toLocaleString();
+
+        const tableRows = filteredBookings.map(booking => `
+            <tr>
+                <td>#${booking.bookingId}</td>
+                <td>${booking.username}</td>
+                <td>${booking.resourceName}<br/><small>${booking.resourceLocation}</small></td>
+                <td>${new Date(booking.bookingDate).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                })}</td>
+                <td>${booking.startTime} - ${booking.endTime}</td>
+                <td>${booking.purpose}</td>
+                <td>${booking.status}</td>
+                <td>${booking.decidedBy || '-'}</td>
+                <td>${booking.decisionReason || '-'}</td>
+            </tr>
+        `).join('');
+
+        const html = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Bookings Report - ${statusLabel}</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 40px;
+                        color: #111827;
+                        font-size: 13px;
+                    }
+                    .header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        margin-bottom: 32px;
+                        border-bottom: 2px solid #111827;
+                        padding-bottom: 16px;
+                    }
+                    .title {
+                        font-size: 22px;
+                        font-weight: 700;
+                        margin: 0 0 4px 0;
+                    }
+                    .subtitle {
+                        font-size: 13px;
+                        color: #6b7280;
+                        margin: 0;
+                    }
+                    .meta {
+                        text-align: right;
+                        font-size: 12px;
+                        color: #6b7280;
+                    }
+                    .status-badge {
+                        display: inline-block;
+                        padding: 3px 10px;
+                        border-radius: 12px;
+                        font-size: 11px;
+                        font-weight: 600;
+                        background-color: #f3f4f6;
+                        border: 1px solid #e5e7eb;
+                    }
+                    .summary {
+                        background-color: #f9fafb;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 8px;
+                        padding: 16px 20px;
+                        margin-bottom: 24px;
+                        display: flex;
+                        gap: 32px;
+                    }
+                    .summary-item {
+                        text-align: center;
+                    }
+                    .summary-value {
+                        font-size: 24px;
+                        font-weight: 700;
+                        color: #111827;
+                    }
+                    .summary-label {
+                        font-size: 11px;
+                        color: #6b7280;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 8px;
+                    }
+                    th {
+                        background-color: #111827;
+                        color: #ffffff;
+                        padding: 10px 12px;
+                        text-align: left;
+                        font-size: 11px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    td {
+                        padding: 10px 12px;
+                        border-bottom: 1px solid #e5e7eb;
+                        vertical-align: top;
+                    }
+                    tr:nth-child(even) {
+                        background-color: #f9fafb;
+                    }
+                    small {
+                        font-size: 11px;
+                        color: #6b7280;
+                    }
+                    .footer {
+                        margin-top: 32px;
+                        padding-top: 12px;
+                        border-top: 1px solid #e5e7eb;
+                        font-size: 11px;
+                        color: #9ca3af;
+                        text-align: center;
+                    }
+                    @media print {
+                        body { margin: 20px; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div>
+                        <p class="title">🏫 Smart Campus Operations Hub</p>
+                        <p class="subtitle">Bookings Report — ${statusLabel}</p>
+                    </div>
+                    <div class="meta">
+                        <div>Generated: ${generatedDate}</div>
+                        <div>Total Records: ${filteredBookings.length}</div>
+                        <div class="status-badge">${statusLabel}</div>
+                    </div>
+                </div>
+
+                <div class="summary">
+                    <div class="summary-item">
+                        <div class="summary-value">${filteredBookings.length}</div>
+                        <div class="summary-label">Total</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value">${filteredBookings.filter(b => b.status === 'PENDING').length}</div>
+                        <div class="summary-label">Pending</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value">${filteredBookings.filter(b => b.status === 'APPROVED').length}</div>
+                        <div class="summary-label">Approved</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value">${filteredBookings.filter(b => b.status === 'REJECTED').length}</div>
+                        <div class="summary-label">Rejected</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value">${filteredBookings.filter(b => b.status === 'CANCELLED').length}</div>
+                        <div class="summary-label">Cancelled</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Resource</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Purpose</th>
+                            <th>Status</th>
+                            <th>Decided By</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                </table>
+
+                <div class="footer">
+                    IT3030 – Programming Applications and Frameworks | SLIIT 2026 | Smart Campus Operations Hub
+                </div>
+
+                <script>
+                    window.onload = function() {
+                        window.print();
+                    }
+                </script>
+            </body>
+            </html>
+        `;
+
+        printWindow.document.write(html);
+        printWindow.document.close();
+    };
+
     return (
         <div style={styles.page}>
             <div style={styles.container}>
@@ -121,10 +320,6 @@ function AdminBookingsPage() {
                 </div>
 
                 {/* Filter Section */}
-                <div style={styles.filterCard}>
-                    <div style={styles.filterHeader}>
-                        <h3 style={styles.filterTitle}>Filter Bookings</h3>
-                    </div>
                     <div style={styles.filterControls}>
                         <select
                             style={styles.filterSelect}
@@ -145,8 +340,13 @@ function AdminBookingsPage() {
                                 Clear Filter
                             </button>
                         )}
+                        <button
+                            style={styles.pdfButton}
+                            onClick={handleGeneratePDF}
+                        >
+                            📄 Generate PDF
+                        </button>
                     </div>
-                </div>
 
                 {/* Bookings Table */}
                 {filteredBookings.length === 0 ? (
@@ -486,6 +686,18 @@ const styles = {
         backgroundColor: '#f3f4f6',
         color: '#374151',
         border: '1px solid #e5e7eb',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease'
+    },
+
+    pdfButton: {
+        padding: '10px 16px',
+        borderRadius: '10px',
+        fontSize: '0.875rem',
+        fontWeight: '600',
+        backgroundColor: '#111827',
+        color: '#ffffff',
+        border: 'none',
         cursor: 'pointer',
         transition: 'all 0.2s ease'
     },
